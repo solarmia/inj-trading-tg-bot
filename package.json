@@ -28,7 +28,8 @@
   "scripts": {
     "dev": "ts-node-dev index.ts",
     "start": "ts-node index.ts",
-    "swap": "ts-node injswap.ts"
+    "swap": "ts-node injswap.ts",
+    "build": "tsc --build"
   },
   "devDependencies": {
     "@types/bs58": "^4.0.4",
