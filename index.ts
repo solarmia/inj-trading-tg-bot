@@ -43,57 +43,72 @@ const run = () => {
             try {
                 switch (text) {
                     case `/start`:
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.referralCheck(chatId)
-                        if (result) {
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.referralCheck(chatId)
+                            if (result) {
+                                await bot.sendMessage(
+                                    chatId,
+                                    result.title, {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                                )
+                            } else {
+                                result = await commands.welcome(chatId, botName)
+                                await bot.sendMessage(
+                                    chatId,
+                                    result.title,
+                                    {
+                                        reply_markup: {
+                                            inline_keyboard: result.content,
+                                            resize_keyboard: true
+                                        }, parse_mode: 'HTML'
+                                    }
+                                )
+
+                            }
+                            break;
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
+
+                    case `/settings`:
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.settings(chatId)
                             await bot.sendMessage(
                                 chatId,
-                                result.title, {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
                             )
-                            // bot.once(`message`, async (msg) => {
-                            //     if (msg.text == 'no' || msg.text == 'No' || msg.text == 'NO' || msg.text == 'n' || msg.text == 'N') {
-                            //         await bot.deleteMessage(chatId, msg.message_id)
-                            //         result = await commands.welcome(chatId, botName)
-                            //         await bot.sendMessage(
-                            //             chatId,
-                            //             result.title,
-                            //             {
-                            //                 reply_markup: {
-                            //                     inline_keyboard: result.content,
-                            //                     resize_keyboard: true
-                            //                 }, parse_mode: 'HTML'
-                            //             }
-                            //         )
-                            //     } else if (msg.text) {
-                            //         const refResult = await commands.addreferral(chatId, msg.text, botName)
-                            //         if (refResult.flag) {
-                            //             result = await commands.welcome(chatId, botName)
-                            //             await bot.sendMessage(
-                            //                 chatId,
-                            //                 result.title,
-                            //                 {
-                            //                     reply_markup: {
-                            //                         inline_keyboard: result.content,
-                            //                         resize_keyboard: true
-                            //                     }, parse_mode: 'HTML'
-                            //                 }
-                            //             )
-                            //         } else {
-                            //             await bot.sendMessage(
-                            //                 chatId,
-                            //                 "Invalid referral link"
-                            //             )
-                            //         }
-                            //     }
-                            //     return
-                            // })
-                        } else {
-                            result = await commands.welcome(chatId, botName)
+                            break;
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
+
+                    case '/wallet':
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.wallet(chatId)
+
                             await bot.sendMessage(
                                 chatId,
                                 result.title,
@@ -105,58 +120,21 @@ const run = () => {
                                 }
                             )
 
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
                         }
-                        break;
-
-                    case `/settings`:
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.settings(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-                        break;
-
-                    case '/wallet':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.wallet(chatId)
-
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-
-                        break
 
                     case '/buy':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.buy(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-                        bot.once(`message`, async (msg) => {
-                            await bot.deleteMessage(chatId, msg.message_id)
-                            result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
-                            if (result) await bot.sendMessage(
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.buy(chatId)
+                            await bot.sendMessage(
                                 chatId,
                                 result.title,
                                 {
@@ -164,81 +142,147 @@ const run = () => {
                                         inline_keyboard: result.content,
                                         resize_keyboard: true
                                     }, parse_mode: 'HTML'
-                                },
+                                }
                             )
-                            else {
-                                const issue = commands.invalid('inputBuyTokenAddress')
-                                await bot.sendMessage(chatId, issue.title, {
+                            bot.once(`message`, async (msg) => {
+                                try {
+                                    await bot.deleteMessage(chatId, msg.message_id)
+                                    result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
+                                    if (result) await bot.sendMessage(
+                                        chatId,
+                                        result.title,
+                                        {
+                                            reply_markup: {
+                                                inline_keyboard: result.content,
+                                                resize_keyboard: true
+                                            }, parse_mode: 'HTML'
+                                        },
+                                    )
+                                    else {
+                                        const issue = commands.invalid('inputBuyTokenAddress')
+                                        await bot.sendMessage(chatId, issue.title, {
+                                            reply_markup: {
+                                                inline_keyboard: issue.content,
+                                                resize_keyboard: true
+                                            }, parse_mode: 'HTML'
+                                        })
+                                    }
+                                    return
+                                } catch (e) {
+                                    bot.stopPolling()
+                                    run()
+                                    const currentUTCDate = new Date().toISOString();
+                                    const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                    fs.appendFileSync('log.txt', log)
+                                    console.log(log)
+                                }
+                            })
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
+
+                    case '/sell':
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.sell(chatId)
+                            await bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
                                     reply_markup: {
-                                        inline_keyboard: issue.content,
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                            )
+
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
+                    case '/leaderboard':
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.leaderBoard()
+                            bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
                                         resize_keyboard: true
                                     }, parse_mode: 'HTML'
                                 })
-                            }
-                            return
-                        })
-                        break
-
-                    case '/sell':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.sell(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-
-                        break
-                    case '/leaderboard':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.leaderBoard()
-                        bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            })
-                        break
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     case '/referral':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.refer(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.refer(chatId)
+                            await bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                            )
 
-                        break
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     case '/help':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = commands.help()
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = commands.help()
+                            await bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                            )
 
-                        break
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     default:
                         break
@@ -248,7 +292,6 @@ const run = () => {
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
-                console.log(1)
                 bot.stopPolling()
                 run()
             }
@@ -299,8 +342,11 @@ const run = () => {
                                 return
                             } catch (e) {
                                 bot.stopPolling()
-                                console.log(123)
                                 run()
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
                             }
                         })
 
@@ -327,34 +373,44 @@ const run = () => {
                         )
                         bot.once(`message`, async (msg) => {
                             if (msg.text) {
-                                await bot.deleteMessage(chatId, msg?.message_id)
-                                const refResult = await commands.addreferral(chatId, msg.text, botName)
-                                if (refResult.flag) {
-                                    result = await commands.welcome(chatId, botName)
-                                    await bot.sendMessage(
-                                        chatId,
-                                        result.title,
-                                        {
-                                            reply_markup: {
-                                                inline_keyboard: result.content,
-                                                resize_keyboard: true
-                                            }, parse_mode: 'HTML'
-                                        }
-                                    )
-                                } else if (refResult.content) {
-                                    await bot.sendMessage(
-                                        chatId,
-                                        "Invalid referral link",
-                                        {
-                                            reply_markup: {
-                                                inline_keyboard: refResult.content,
-                                                resize_keyboard: true
-                                            }, parse_mode: 'HTML'
-                                        }
-                                    )
+                                try {
+                                    await bot.deleteMessage(chatId, msg?.message_id)
+                                    const refResult = await commands.addreferral(chatId, msg.text, botName)
+                                    if (refResult.flag) {
+                                        result = await commands.welcome(chatId, botName)
+                                        await bot.sendMessage(
+                                            chatId,
+                                            result.title,
+                                            {
+                                                reply_markup: {
+                                                    inline_keyboard: result.content,
+                                                    resize_keyboard: true
+                                                }, parse_mode: 'HTML'
+                                            }
+                                        )
+                                    } else if (refResult.content) {
+                                        await bot.sendMessage(
+                                            chatId,
+                                            "Invalid referral link",
+                                            {
+                                                reply_markup: {
+                                                    inline_keyboard: refResult.content,
+                                                    resize_keyboard: true
+                                                }, parse_mode: 'HTML'
+                                            }
+                                        )
+                                    }
+                                    return
+
+                                } catch (e) {
+                                    bot.stopPolling()
+                                    run()
+                                    const currentUTCDate = new Date().toISOString();
+                                    const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                    fs.appendFileSync('log.txt', log)
+                                    console.log(log)
                                 }
                             }
-                            return
                         })
 
                         break
@@ -401,29 +457,38 @@ const run = () => {
                         )
 
                         bot.once(`message`, async (msg) => {
-                            await bot.deleteMessage(chatId, msg.message_id)
-                            const result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
-                            if (result) await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                },
+                            try {
+                                await bot.deleteMessage(chatId, msg.message_id)
+                                const result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
+                                if (result) await bot.sendMessage(
+                                    chatId,
+                                    result.title,
+                                    {
+                                        reply_markup: {
+                                            inline_keyboard: result.content,
+                                            resize_keyboard: true
+                                        }, parse_mode: 'HTML'
+                                    },
 
-                            )
-                            else {
-                                const issue = commands.invalid('inputBuyTokenAddress')
-                                await bot.sendMessage(chatId, issue.title, {
-                                    reply_markup: {
-                                        inline_keyboard: issue.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                })
+                                )
+                                else {
+                                    const issue = commands.invalid('inputBuyTokenAddress')
+                                    await bot.sendMessage(chatId, issue.title, {
+                                        reply_markup: {
+                                            inline_keyboard: issue.content,
+                                            resize_keyboard: true
+                                        }, parse_mode: 'HTML'
+                                    })
+                                }
+                                return
+                            } catch (e) {
+                                bot.stopPolling()
+                                run()
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
                             }
-                            return
                         })
 
                         break
@@ -489,20 +554,29 @@ const run = () => {
                         break
 
                     case 'show':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.showKey(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.showKey(chatId)
+                            await bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                            )
 
-                        break
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     case 'refer':
                         result = await commands.refer(chatId)
@@ -533,34 +607,52 @@ const run = () => {
                         break
 
                     case 'refresh':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.refresh(chatId)
-                        bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            })
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.refresh(chatId)
+                            bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                })
 
-                        break
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     case 'refreshwallet':
-                        await bot.deleteMessage(chatId, msgId)
-                        result = await commands.refreshWallet(chatId)
-                        bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            })
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            result = await commands.refreshWallet(chatId)
+                            bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                })
 
-                        break
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     case 'leaderboard':
                         result = await commands.leaderBoard()
@@ -631,19 +723,28 @@ const run = () => {
                             editText)
 
                         bot.once(`message`, async (msg) => {
-                            await bot.deleteMessage(chatId, msg.message_id)
-                            await bot.deleteMessage(chatId, desc.message_id)
-                            await bot.editMessageReplyMarkup(
-                                {
-                                    inline_keyboard: (await commands.newSettings(chatId, action, msg.text)).content
-                                },
-                                {
-                                    chat_id: chatId,
-                                    message_id: msgId
-                                }
-                            )
+                            try {
+                                await bot.deleteMessage(chatId, msg.message_id)
+                                await bot.deleteMessage(chatId, desc.message_id)
+                                await bot.editMessageReplyMarkup(
+                                    {
+                                        inline_keyboard: (await commands.newSettings(chatId, action, msg.text)).content
+                                    },
+                                    {
+                                        chat_id: chatId,
+                                        message_id: msgId
+                                    }
+                                )
 
-                            return
+                                return
+                            } catch (e) {
+                                bot.stopPolling()
+                                run()
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
+                            }
                         })
 
                         break
@@ -663,8 +764,17 @@ const run = () => {
                         break
 
                     case 'cancel':
-                        await bot.deleteMessage(chatId, msgId)
-                        break
+                        try {
+                            await bot.deleteMessage(chatId, msgId)
+                            break
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
+                        }
 
                     default:
                         break
@@ -697,6 +807,29 @@ const run = () => {
                             }
                             const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
                             const tx = await commands.swapTokens(chatId, msg.text!, address, 'buy')
+                            try {
+                                bot.deleteMessage(chatId, txConfirm.message_id)
+                                bot.sendMessage(chatId,
+                                    tx.title, {
+                                    reply_markup: {
+                                        inline_keyboard: tx.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                                )
+                            } catch (e) {
+                                bot.stopPolling()
+                                run()
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
+                            }
+                        })
+                    } else {
+                        const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
+                        const tx = await commands.swapTokens(chatId, method, address, 'buy')
+                        try {
                             bot.deleteMessage(chatId, txConfirm.message_id)
                             bot.sendMessage(chatId,
                                 tx.title, {
@@ -706,19 +839,14 @@ const run = () => {
                                 }, parse_mode: 'HTML'
                             }
                             )
-                        })
-                    } else {
-                        const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
-                        const tx = await commands.swapTokens(chatId, method, address, 'buy')
-                        bot.deleteMessage(chatId, txConfirm.message_id)
-                        bot.sendMessage(chatId,
-                            tx.title, {
-                            reply_markup: {
-                                inline_keyboard: tx.content,
-                                resize_keyboard: true
-                            }, parse_mode: 'HTML'
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
                         }
-                        )
                     }
 
                 } else if (action.startsWith('sell:')) {
@@ -764,6 +892,29 @@ const run = () => {
                             }
                             const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
                             const tx = await commands.swapTokens(chatId, msg.text!, address, 'sell')
+                            try {
+                                bot.deleteMessage(chatId, txConfirm.message_id)
+                                bot.sendMessage(chatId,
+                                    tx.title, {
+                                    reply_markup: {
+                                        inline_keyboard: tx.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                                )
+                            } catch (e) {
+                                bot.stopPolling()
+                                run()
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
+                            }
+                        })
+                    } else {
+                        const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
+                        const tx = await commands.swapTokens(chatId, method, address, 'sell')
+                        try {
                             bot.deleteMessage(chatId, txConfirm.message_id)
                             bot.sendMessage(chatId,
                                 tx.title, {
@@ -773,19 +924,14 @@ const run = () => {
                                 }, parse_mode: 'HTML'
                             }
                             )
-                        })
-                    } else {
-                        const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
-                        const tx = await commands.swapTokens(chatId, method, address, 'sell')
-                        bot.deleteMessage(chatId, txConfirm.message_id)
-                        bot.sendMessage(chatId,
-                            tx.title, {
-                            reply_markup: {
-                                inline_keyboard: tx.content,
-                                resize_keyboard: true
-                            }, parse_mode: 'HTML'
+                        } catch (e) {
+                            bot.stopPolling()
+                            run()
+                            const currentUTCDate = new Date().toISOString();
+                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            fs.appendFileSync('log.txt', log)
+                            console.log(log)
                         }
-                        )
                     }
                 } else if (action.startsWith('limitB')) {
                     const address = action.split(':')[1]
@@ -839,12 +985,10 @@ const run = () => {
                 }
 
             } catch (e) {
-                console.log('-------------------------')
                 const currentUTCDate = new Date().toISOString();
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
-                console.log(324234)
                 bot.stopPolling()
                 run()
             }
