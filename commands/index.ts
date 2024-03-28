@@ -1,6 +1,6 @@
 import { dojoPairUrl, injExplorer } from '../config';
 import { errorTitle } from '../utils/type';
-import { swapTokenHelper, checkInfo, createWalletHelper, fetch, getSetting, getTokenInfoHelper, getTopTradersHelper, importWalletHelper, setSettings, validReferalLink, getAllTokenList } from './helper'
+import { swapTokenHelper, checkInfo, createWalletHelper, fetch, getSetting, getTokenInfoHelper, getTopTradersHelper, importWalletHelper, setSettings, validReferalLink, getAllTokenList, isValidAddress } from './helper'
 
 interface IConfirm {
     [key: string]: {
@@ -100,9 +100,11 @@ Are you going to create new wallet or import your own wallet?`
 }
 
 export const importWallet = async (chatId: number, privateKey: string, botName: string) => {
-    const { publicKey, balance } = await importWalletHelper(chatId, privateKey, botName)
-
-    const title = `Successfully imported!
+    const data = await importWalletHelper(chatId, privateKey, botName)
+    if (data) {
+        const publicKey = data?.publicKey
+        const balance = data?.balance
+        const title = `Successfully imported!
     
 To get started with trading, send some INJ to your Scale Bot wallet address:
 <code>${publicKey}</code>
@@ -115,11 +117,12 @@ To buy a token just enter a token address.
 
 For more info on your wallet and to retrieve your private key, tap the wallet button below. We guarantee the safety of user funds on ScaleXFi Bot, but if you expose your private key your funds will not be safe.`
 
-    const content = mainContent()
+        const content = mainContent()
 
-    return {
-        title, content
-    }
+        return {
+            title, content
+        }
+    } return invalid('invalidPrivKey')
 }
 
 export const refresh = async (chatId: number) => {
@@ -413,10 +416,12 @@ Max Price Impact is to protect against trades in extremely illiquid pools.`
 
 export const getTokenInfo = async (chatId: number, address: string, method: string) => {
     try {
-        const result = await getTokenInfoHelper(address, chatId)
-        if (result) {
-            if (method == 'buy') {
-                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | <code>${address}</code>
+        const flag = isValidAddress(address)
+        if (flag) {
+            const result = await getTokenInfoHelper(address, chatId)
+            if (result) {
+                if (method == 'buy') {
+                    const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | <code>${address}</code>
 
 Price: $${result.price}
 5m: ${result.priceChange.m5}%, 1h: ${result.priceChange.h1}%, 6h: ${result.priceChange.h6}%, 24h: ${result.priceChange.h24}%
@@ -425,18 +430,18 @@ Market Cap: $${result.fdv}
 Wallet Balance: ${result.balance} INJ
 To buy press one of the buttons below.`
 
-                const { buy1, buy2 } = await getSetting(chatId)
-                const content = [
-                    [{ text: `Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
-                    [{ text: `Buy ${buy1} INJ`, callback_data: `buyS:${result.pairAddress}` }, {
-                        text: `Buy ${buy2} INJ`, callback_data: `buyL:${result.pairAddress}`
-                    }, { text: `Buy X INJ`, callback_data: `buyX:${result.pairAddress}` }],
-                    [{ text: `Limit Order`, callback_data: `limitB:${address}` }],
-                    [{ text: `Close`, callback_data: `cancel` }]
-                ]
-                return { title, content }
-            } else {
-                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | <code>${address}</code>
+                    const { buy1, buy2 } = await getSetting(chatId)
+                    const content = [
+                        [{ text: `Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
+                        [{ text: `Buy ${buy1} INJ`, callback_data: `buyS:${result.pairAddress}` }, {
+                            text: `Buy ${buy2} INJ`, callback_data: `buyL:${result.pairAddress}`
+                        }, { text: `Buy X INJ`, callback_data: `buyX:${result.pairAddress}` }],
+                        [{ text: `Limit Order`, callback_data: `limitB:${address}` }],
+                        [{ text: `Close`, callback_data: `cancel` }]
+                    ]
+                    return { title, content }
+                } else {
+                    const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | <code>${address}</code>
 
 Price: $${result.price}
 5m: ${result.priceChange.m5}%, 1h: ${result.priceChange.h1}%, 6h: ${result.priceChange.h6}%, 24h: ${result.priceChange.h24}%
@@ -445,17 +450,18 @@ Market Cap: $${result.fdv}
 Wallet Balance: ${result.balance} INJ
 To sell press one of the buttons below.`
 
-                const { sell1, sell2 } = await getSetting(chatId)
+                    const { sell1, sell2 } = await getSetting(chatId)
 
-                const content = [
-                    [{ text: `Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
-                    [{ text: `Sell ${sell1} %`, callback_data: `sellS:${address}` }, {
-                        text: `Sell ${sell2} %`, callback_data: `sellL:${address}`
-                    }, { text: `Sell X %`, callback_data: `sellX:${address}` }],
-                    [{ text: `Close`, callback_data: `cancel` }]
-                ]
-                return { title, content }
-            }
+                    const content = [
+                        [{ text: `Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
+                        [{ text: `Sell ${sell1} %`, callback_data: `sellS:${address}` }, {
+                            text: `Sell ${sell2} %`, callback_data: `sellL:${address}`
+                        }, { text: `Sell X %`, callback_data: `sellX:${address}` }],
+                        [{ text: `Close`, callback_data: `cancel` }]
+                    ]
+                    return { title, content }
+                }
+            } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: 'Close', callback_data: 'cancel' }]] }
         } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: 'Close', callback_data: 'cancel' }]] }
     } catch (e) {
         console.log(e)

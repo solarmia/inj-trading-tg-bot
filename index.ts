@@ -231,7 +231,7 @@ const run = () => {
                         break
                 }
             } catch (e) {
-                console.log('error -> \n', e)
+                console.log(`${chatId} : error -> \n`, e)
                 const issue = commands.invalid('internal')
                 await bot.sendMessage(chatId, issue.title, {
                     reply_markup: {
@@ -239,7 +239,7 @@ const run = () => {
                         resize_keyboard: true
                     }, parse_mode: 'HTML'
                 })
-                throw (e)
+                run()
             }
         });
 
@@ -258,29 +258,29 @@ const run = () => {
                         await bot.deleteMessage(chatId, msgId)
                         const inputmsg = await bot.sendMessage(
                             chatId,
-                            `Please input your private key`
+                            `Please input your private key`,
+                            {
+                                reply_markup: {
+                                    inline_keyboard: [[{ text: 'close', callback_data: 'cancel' }]],
+                                    resize_keyboard: true
+                                }, parse_mode: 'HTML'
+                            }
                         )
 
                         bot.once(`message`, async (msg) => {
-                            try {
-
-                                await bot.deleteMessage(chatId, inputmsg.message_id)
-                                await bot.deleteMessage(chatId, msg.message_id)
-                                result = await commands.importWallet(chatId, msg.text!, botName)
-                                await bot.sendMessage(
-                                    chatId,
-                                    result.title,
-                                    {
-                                        reply_markup: {
-                                            inline_keyboard: result.content,
-                                            resize_keyboard: true
-                                        }, parse_mode: 'HTML'
-                                    }
-                                )
-                                return
-                            } catch (e) {
-                                throw (e)
-                            }
+                            await bot.deleteMessage(chatId, msg.message_id)
+                            result = await commands.importWallet(chatId, msg.text!, botName)
+                            await bot.sendMessage(
+                                chatId,
+                                result.title,
+                                {
+                                    reply_markup: {
+                                        inline_keyboard: result.content,
+                                        resize_keyboard: true
+                                    }, parse_mode: 'HTML'
+                                }
+                            )
+                            return
                         })
 
                         break
@@ -768,14 +768,14 @@ const run = () => {
                 }
 
             } catch (e) {
-                console.log('error -> \n', e)
+                console.log(`${chatId} : error -> \n`, e)
                 const issue = commands.invalid('internal')
                 await bot.sendMessage(chatId, issue.title, {
                     reply_markup: {
                         inline_keyboard: issue.content
                     }, parse_mode: 'HTML'
                 })
-                throw (e)
+                run()
             }
         })
         // await bot.answerCallbackQuery(callbackQueryId, { text: 'Input Token address to buy' })

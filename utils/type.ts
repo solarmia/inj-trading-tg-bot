@@ -69,6 +69,7 @@ export const errorTitle: {
   inputTokenPrice: `Invalid price. Make sure price is correct.`,
   internal: `Invalid action, please try again.`,
   lowINJBalance: `Low balance in your wallet.`,
+  invalidPrivKey: `Invalid private key.`,
 }
 
 interface IToken {

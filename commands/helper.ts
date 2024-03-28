@@ -122,48 +122,51 @@ export const createWalletHelper = async (chatId: number, botName: string) => {
 }
 
 export const importWalletHelper = async (chatId: number, privateKeyHex: string, botName: string) => {
-  const privateKey = PrivateKey.fromHex(privateKeyHex)
-  const publicKey = privateKey.toAddress().toBech32()
-  const referralLink = `https://t.me/${botName}?ref=${encode(chatId.toString())}`
   try {
-    const balance = await getINJBalance(publicKey)
-    userData[chatId] = {
-      privateKey: privateKey.toPrivateKeyHex(),
-      publicKey,
-      balance,
-      referralLink,
-      referees: [],
-      referrer: '',
-      buy: 0,
-      sell: 0
-    }
-    writeData(userData, userPath)
-    return {
-      publicKey,
-      privateKey,
-      referralLink,
-      balance
-    }
+    const privateKey = PrivateKey.fromHex(privateKeyHex)
+    const publicKey = privateKey.toAddress().toBech32()
+    const referralLink = `https://t.me/${botName}?ref=${encode(chatId.toString())}`
+    try {
+      const balance = await getINJBalance(publicKey)
+      userData[chatId] = {
+        privateKey: privateKey.toPrivateKeyHex(),
+        publicKey,
+        balance,
+        referralLink,
+        referees: [],
+        referrer: '',
+        buy: 0,
+        sell: 0
+      }
+      writeData(userData, userPath)
+      return {
+        publicKey,
+        privateKey,
+        referralLink,
+        balance
+      }
 
+    } catch (e) {
+      userData[chatId] = {
+        privateKey: privateKey.toPrivateKeyHex(),
+        publicKey: publicKey.toString(),
+        balance: 0,
+        referralLink,
+        referees: [],
+        referrer: '',
+        buy: 0,
+        sell: 0
+      }
+      writeData(userData, userPath)
+      return {
+        publicKey,
+        privateKey,
+        referralLink,
+        balance: 0
+      }
+    }
   } catch (e) {
-    userData[chatId] = {
-      privateKey: privateKey.toPrivateKeyHex(),
-      publicKey: publicKey.toString(),
-      balance: 0,
-      referralLink,
-      referees: [],
-      referrer: '',
-      buy: 0,
-      sell: 0
-    }
-    writeData(userData, userPath)
-    return {
-      publicKey,
-      privateKey,
-      referralLink,
-      balance: 0
-    }
-
+    return undefined
   }
 }
 
@@ -734,3 +737,19 @@ const getInjPriceFiat = async () => {
   const injOracle = oracleList.find((list) => list.symbol === "INJ");
   return injOracle?.price;
 };
+
+export const isValidAddress = (address: string): boolean => {
+  // Define the regular expression pattern for the address
+  const regexPattern = /^inj[a-z0-9]{39}$/;
+
+  // Test the address against the pattern
+  return regexPattern.test(address);
+}
+
+export const isValidPrivkey = (address: string): boolean => {
+  // Define the regular expression pattern for the address
+  const regexPattern = /^0x[a-fA-F0-9]{40}$/;
+
+  // Test the address against the pattern
+  return regexPattern.test(address);
+}
