@@ -48,45 +48,50 @@ const run = () => {
                         if (result) {
                             await bot.sendMessage(
                                 chatId,
-                                result
+                                result.title, {
+                                reply_markup: {
+                                    inline_keyboard: result.content,
+                                    resize_keyboard: true
+                                }, parse_mode: 'HTML'
+                            }
                             )
-                            bot.once(`message`, async (msg) => {
-                                if (msg.text == 'no' || msg.text == 'No' || msg.text == 'NO' || msg.text == 'n' || msg.text == 'N') {
-                                    await bot.deleteMessage(chatId, msg.message_id)
-                                    result = await commands.welcome(chatId, botName)
-                                    await bot.sendMessage(
-                                        chatId,
-                                        result.title,
-                                        {
-                                            reply_markup: {
-                                                inline_keyboard: result.content,
-                                                resize_keyboard: true
-                                            }, parse_mode: 'HTML'
-                                        }
-                                    )
-                                } else if (msg.text) {
-                                    const refResult = await commands.addreferral(chatId, msg.text, botName)
-                                    if (refResult.flag) {
-                                        result = await commands.welcome(chatId, botName)
-                                        await bot.sendMessage(
-                                            chatId,
-                                            result.title,
-                                            {
-                                                reply_markup: {
-                                                    inline_keyboard: result.content,
-                                                    resize_keyboard: true
-                                                }, parse_mode: 'HTML'
-                                            }
-                                        )
-                                    } else {
-                                        await bot.sendMessage(
-                                            chatId,
-                                            "Invalid referral link"
-                                        )
-                                    }
-                                }
-                                return
-                            })
+                            // bot.once(`message`, async (msg) => {
+                            //     if (msg.text == 'no' || msg.text == 'No' || msg.text == 'NO' || msg.text == 'n' || msg.text == 'N') {
+                            //         await bot.deleteMessage(chatId, msg.message_id)
+                            //         result = await commands.welcome(chatId, botName)
+                            //         await bot.sendMessage(
+                            //             chatId,
+                            //             result.title,
+                            //             {
+                            //                 reply_markup: {
+                            //                     inline_keyboard: result.content,
+                            //                     resize_keyboard: true
+                            //                 }, parse_mode: 'HTML'
+                            //             }
+                            //         )
+                            //     } else if (msg.text) {
+                            //         const refResult = await commands.addreferral(chatId, msg.text, botName)
+                            //         if (refResult.flag) {
+                            //             result = await commands.welcome(chatId, botName)
+                            //             await bot.sendMessage(
+                            //                 chatId,
+                            //                 result.title,
+                            //                 {
+                            //                     reply_markup: {
+                            //                         inline_keyboard: result.content,
+                            //                         resize_keyboard: true
+                            //                     }, parse_mode: 'HTML'
+                            //                 }
+                            //             )
+                            //         } else {
+                            //             await bot.sendMessage(
+                            //                 chatId,
+                            //                 "Invalid referral link"
+                            //             )
+                            //         }
+                            //     }
+                            //     return
+                            // })
                         } else {
                             result = await commands.welcome(chatId, botName)
                             await bot.sendMessage(
@@ -297,6 +302,27 @@ const run = () => {
                             return
                         })
 
+                        break
+
+                    case 'welcome':
+                        result = await commands.welcome(chatId, botName)
+                        await bot.sendMessage(
+                            chatId,
+                            result.title,
+                            {
+                                reply_markup: {
+                                    inline_keyboard: result.content,
+                                    resize_keyboard: true
+                                }, parse_mode: 'HTML'
+                            }
+                        )
+                        break
+
+                    case 'inputref':
+                        await bot.sendMessage(
+                            chatId,
+                            'Please input valid referral link'
+                        )
                         break
 
                     case 'create':

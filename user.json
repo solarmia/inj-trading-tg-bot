@@ -233,15 +233,5 @@
         "referrer": "",
         "buy": 0,
         "sell": 0
-    },
-    "6381452440": {
-        "privateKey": "0x9a9044a0f632ddff421d775db93bd13eac31bb87313efb2b687abf198c9deae6",
-        "publicKey": "inj15579l82y9yt8cgnrw3pqc8ur26j55jpdmwde5k",
-        "balance": 0.31232202460403014,
-        "referralLink": "https://t.me/aaaa1234123aaaaabot?ref=NjM4MTQ1MjQ0MA==",
-        "referees": [],
-        "referrer": "",
-        "buy": 0,
-        "sell": 0
     }
 }
