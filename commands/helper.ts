@@ -46,9 +46,14 @@ const push = async () => {
 
 export const init = async () => {
   userData = await readData(userPath)
-  settings = await readData(settingsPath)
   rankData = await readData(rankPath)
   orderData = await readData(orderPath)
+  try {
+    settings = await readData(settingsPath)
+  } catch (e) {
+    settings = {}
+    writeData(settingsPath, settings)
+  }
 }
 
 export const checkInfo = async (chatId: number) => {
@@ -584,7 +589,7 @@ export const addPlaceOrder = async (chatId: number, price: number, amount: numbe
 
 export const placeLimitOrder = async () => {
   setInterval(async () => {
-    push()
+    // push()
     orderData = await readData(orderPath)
     for (const key in orderData) {
       if (Object.prototype.hasOwnProperty.call(orderData, key)) {
