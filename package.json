@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "ts-node-dev index.ts",
     "start": "ts-node index.ts",
-    "swap": "ts-node injswap.ts",
+    "test": "node dist/index.js",
     "build": "tsc --build"
   },
   "devDependencies": {
