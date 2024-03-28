@@ -282,7 +282,7 @@ const run = () => {
                         )
 
                         bot.once(`message`, async (msg) => {
-                            // try {
+                            try {
                                 await bot.deleteMessage(chatId, inputMsg.message_id)
                                 await bot.deleteMessage(chatId, msg.message_id)
                                 result = await commands.importWallet(chatId, msg.text!, botName)
@@ -297,11 +297,11 @@ const run = () => {
                                     }
                                 )
                                 return
-                            // } catch (e) {
-                            //     bot.stopPolling()
-                            //     console.log(123)
-                            //     run()
-                            // }
+                            } catch (e) {
+                                bot.stopPolling()
+                                console.log(123)
+                                run()
+                            }
                         })
 
                         break
