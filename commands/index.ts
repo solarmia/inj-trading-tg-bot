@@ -46,7 +46,8 @@ const mainContent = (pin: boolean = false) => [
 
 export const referralCheck = async (chatId: number) => {
     if (!(await checkInfo(chatId))) {
-        const title = 'Did you receive a referral link? If yes, please input referral link.\nIf no, please input no.'
+        const title = 'Did you receive a referral link?'
+        const content = [[{ text: 'Yes', callback_data: "" }, { text: 'No', callback_data: "" }]]
         return title
     }
     return undefined
