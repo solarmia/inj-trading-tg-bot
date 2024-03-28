@@ -17,7 +17,7 @@ const run = () => {
     try {
         const bot = new TelegramBot(token!, { polling: true });
         const currentUTCDate = new Date().toISOString();
-        fs.appendFileSync('log.txt', `${currentUTCDate} : Bot started`)
+        fs.appendFileSync('log.txt', `${currentUTCDate} : Bot started\n`)
         console.log("Bot started");
         bot.getMe().then(user => {
             botName = user.username!.toString()
@@ -240,7 +240,7 @@ const run = () => {
                 }
             } catch (e) {
                 const currentUTCDate = new Date().toISOString();
-                const log = `${currentUTCDate} : ${chatId} : error -> \n ${e}\n`
+                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
                 const issue = commands.invalid('internal')
@@ -270,8 +270,7 @@ const run = () => {
                 let result
                 switch (action) {
                     case 'import':
-                        await bot.deleteMessage(chatId, msgId)
-                        const inputmsg = await bot.sendMessage(
+                        await bot.sendMessage(
                             chatId,
                             `Please input your private key`,
                             {
@@ -301,7 +300,6 @@ const run = () => {
                         break
 
                     case 'create':
-                        await bot.deleteMessage(chatId, msgId)
                         result = await commands.createWallet(chatId, botName)
                         await bot.sendMessage(
                             chatId,
@@ -316,7 +314,6 @@ const run = () => {
                         break
 
                     case 'register':
-                        await bot.deleteMessage(chatId, msgId)
                         result = await commands.welcome(chatId, botName, true)
                         await bot.sendMessage(
                             chatId,
@@ -345,7 +342,6 @@ const run = () => {
 
                         bot.once(`message`, async (msg) => {
                             await bot.deleteMessage(chatId, msg.message_id)
-                            await bot.deleteMessage(chatId, buyMsg.message_id)
                             const result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
                             if (result) await bot.sendMessage(
                                 chatId,
@@ -784,7 +780,7 @@ const run = () => {
 
             } catch (e) {
                 const currentUTCDate = new Date().toISOString();
-                const log = `${currentUTCDate} : ${chatId} : error -> \n ${e}\n`
+                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
                 run()
@@ -799,7 +795,7 @@ const run = () => {
         // await bot.answerCallbackQuery(callbackQueryId, { text: 'Input Token address to buy' })
     } catch (e) {
         const currentUTCDate = new Date().toISOString();
-        const log = `${currentUTCDate} : error -> \n ${e}\n`
+        const log = `${currentUTCDate} : error -> ${e}\n`
         fs.appendFileSync('log.txt', log)
         console.log(log)
         run()

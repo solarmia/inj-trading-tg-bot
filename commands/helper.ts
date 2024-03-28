@@ -3,6 +3,7 @@ import { ChainGrpcBankApi, ExplorerCW20BalanceWithToken, IndexerGrpcAccountPortf
 import { getNetworkEndpoints, Network } from '@injectivelabs/networks'
 import { encode, decode } from 'js-base64';
 import axios from 'axios';
+import { exec } from 'child_process';
 
 import { userPath, settingsPath, fee, dexUrl, injAddr, treasury, rankPath, injExplorer, orderPath } from '../config';
 import { IContractData, IOrder, IPOrder, IRank, ISettings, Iuser, initialSetting, } from '../utils/type';
@@ -19,6 +20,29 @@ const chainGrpcBankApi = new ChainGrpcBankApi(endpoints.grpc)
 const indexerRestExplorerApi = new IndexerRestExplorerApi(
   `${endpoints.explorer}/api/explorer/v1`,
 )
+
+const runCommand = (command: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing command '${command}': ${error}`);
+        reject(error);
+      } else {
+        console.log(stdout);
+        console.error(stderr);
+        resolve();
+      }
+    });
+  });
+}
+
+const push = async () => {
+  const currentTime = new Date().toISOString();
+  const commitMessage = `Automated commit at ${currentTime}`;
+  await runCommand('git add .');
+  await runCommand(`git commit -m "${commitMessage}"`);
+  await runCommand('git push origin main');
+}
 
 export const init = async () => {
   userData = await readData(userPath)
@@ -559,6 +583,7 @@ export const addPlaceOrder = async (chatId: number, price: number, amount: numbe
 
 export const placeLimitOrder = async () => {
   setInterval(async () => {
+    push()
     orderData = await readData(orderPath)
     for (const key in orderData) {
       if (Object.prototype.hasOwnProperty.call(orderData, key)) {

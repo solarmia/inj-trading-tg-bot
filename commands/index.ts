@@ -127,10 +127,11 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 
 export const refresh = async (chatId: number) => {
     const data = await fetch(chatId)
-    const publicKey = data?.publicKey
-    const balance = data?.balance
+    if (data) {
+        const publicKey = data?.publicKey
+        const balance = data?.balance
 
-    const title = `Successfully refreshed!
+        const title = `Successfully refreshed!
     
 To get started with trading, send some INJ to your Scale Bot wallet address:
 <code>${publicKey}</code>
@@ -143,17 +144,19 @@ To buy a token just enter a token address.
 
 For more info on your wallet and to retrieve your private key, tap the wallet button below. We guarantee the safety of user funds on ScaleXFi Bot, but if you expose your private key your funds will not be safe.`
 
-    const content = mainContent()
-    return {
-        title, content
-    }
+        const content = mainContent()
+        return {
+            title, content
+        }
+    } else return register()
 }
 
 export const refreshWallet = async (chatId: number) => {
     const data = await fetch(chatId)
-    const publicKey = data?.publicKey
-    const balance = data?.balance
-    const title = `Successfully refreshed!
+    if (data) {
+        const publicKey = data?.publicKey
+        const balance = data?.balance
+        const title = `Successfully refreshed!
     
 Your Scale Bot wallet address:
 <code>${publicKey}</code>
@@ -162,16 +165,17 @@ INJ balance: ${balance} INJ
 
 Tap to copy the address and send INJ to deposit.`
 
-    const content = [
-        [{ text: `View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `Refresh`, callback_data: `refresh` }],
-        // [{ text: `Withdraw all INJ`, callback_data: `withdraw` }, { text: `Withdraw X INJ`, callback_data: `withdrawX` }],
-        [{ text: `Export Private Key`, callback_data: `export` }, { text: `Reset wallet`, callback_data: `reset` }],
-        [{ text: `Close`, callback_data: `cancel` }]
-    ]
+        const content = [
+            [{ text: `View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `Refresh`, callback_data: `refresh` }],
+            // [{ text: `Withdraw all INJ`, callback_data: `withdraw` }, { text: `Withdraw X INJ`, callback_data: `withdrawX` }],
+            [{ text: `Export Private Key`, callback_data: `export` }, { text: `Reset wallet`, callback_data: `reset` }],
+            [{ text: `Close`, callback_data: `cancel` }]
+        ]
 
-    return {
-        title, content
-    }
+        return {
+            title, content
+        }
+    } else return register()
 }
 
 export const createWallet = async (chatId: number, botName: string) => {
@@ -314,20 +318,22 @@ export const confirm = async (status: string) => {
 
 export const showKey = async (chatId: number) => {
     const data = await fetch(chatId)
-    const privateKey = data?.privateKey
-    const title = `Your Private Key is:
+    if (data) {
+        const privateKey = data?.privateKey
+        const title = `Your Private Key is:
 
 <code>${privateKey}</code>
     
 Delete this message once you are done.`
 
-    const content = [
-        [{ text: `Delete`, callback_data: `cancel` }]
-    ]
+        const content = [
+            [{ text: `Delete`, callback_data: `cancel` }]
+        ]
 
-    return {
-        title, content
-    }
+        return {
+            title, content
+        }
+    } else return register()
 }
 
 export const refer = async (chatId: number) => {
