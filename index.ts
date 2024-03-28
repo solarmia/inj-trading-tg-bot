@@ -299,6 +299,7 @@ const run = () => {
                                 return
                             } catch (e) {
                                 bot.stopPolling()
+                                console.log(123)
                                 run()
                             }
                         })
@@ -843,6 +844,7 @@ const run = () => {
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
+                console.log(324234)
                 bot.stopPolling()
                 run()
             }
