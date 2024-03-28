@@ -323,6 +323,31 @@ const run = () => {
                             chatId,
                             'Please input valid referral link'
                         )
+                        bot.once(`message`, async (msg) => {
+                            if (msg.text) {
+                                const refResult = await commands.addreferral(chatId, msg.text, botName)
+                                if (refResult.flag) {
+                                    result = await commands.welcome(chatId, botName)
+                                    await bot.sendMessage(
+                                        chatId,
+                                        result.title,
+                                        {
+                                            reply_markup: {
+                                                inline_keyboard: result.content,
+                                                resize_keyboard: true
+                                            }, parse_mode: 'HTML'
+                                        }
+                                    )
+                                } else {
+                                    await bot.sendMessage(
+                                        chatId,
+                                        "Invalid referral link"
+                                    )
+                                }
+                            }
+                            return
+                        })
+
                         break
 
                     case 'create':
