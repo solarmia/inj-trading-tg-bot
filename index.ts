@@ -244,12 +244,12 @@ const run = () => {
                         break
                 }
             } catch (e) {
-                console.log('1111111111111111')
-
                 const currentUTCDate = new Date().toISOString();
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
+                console.log(1)
+                bot.stopPolling()
                 run()
             }
         });
