@@ -42,7 +42,6 @@ export const validReferalLink = async (link: string, botName: string, chatId: nu
   if (link.startsWith(validation)) {
     const encoded = link.replace(validation, '')
     const decoded = decode(encoded)
-    console.log(decoded)
     userData[decoded].referees.push(chatId.toString())
     const referralLink = `https://t.me/${botName}?ref=${encode(chatId.toString())}`
     userData[chatId] = {
@@ -103,7 +102,6 @@ export const createWalletHelper = async (chatId: number, botName: string) => {
   const mnemonic = generateMnemonic();
   const privateKey = PrivateKey.fromMnemonic(mnemonic)
   const publicKey = privateKey.toAddress().toBech32()
-  console.log({ injectiveAddress: publicKey, str: publicKey.toString(), base: privateKey.toPublicKey().toBase64() })
 
   const referralLink = `https://t.me/${botName}?ref=${encode(chatId.toString())}`
   userData[chatId] = {
@@ -564,7 +562,6 @@ export const placeLimitOrder = async () => {
     for (const key in orderData) {
       if (Object.prototype.hasOwnProperty.call(orderData, key)) {
         for (let i = 0; i < orderData[key].length; i++) {
-          console.log(orderData[key][i])
           const data = await checkPossibleOrder(orderData[key][i])
           if (data?.status == 0) {
             orderData[key].splice(i, 1)
@@ -729,71 +726,11 @@ export const checkPossibleOrder = async (data: IPOrder) => {
 
 
 // ------------------------------------
-const getUserCW20Balances = async (address: string, token: string) => {
-  const indexerRestExplorerApi = new IndexerRestExplorerApi(
-    `${endpoints.explorer}/api/explorer/v1`
-  );
-
-  const cw20Balances = await indexerRestExplorerApi.fetchCW20BalancesNoThrow(
-    address
-  );
-  for (let i = 0; i < cw20Balances.length; i++) {
-    if (cw20Balances[i].contractAddress == token)
-      return cw20Balances[i];
-  }
-};
-
-async function getNativeBalance(
-  injectiveAddress: string
-): Promise<string | undefined> {
-  try {
-    const portfolio =
-      await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(
-        injectiveAddress
-      );
-
-    console.log('portfolio', portfolio)
-    return portfolio.bankBalancesList[0].amount;
-  } catch (error) {
-    console.error("Error creating wallet:", error);
-    return undefined;
-  }
-}
 
 const getInjPriceFiat = async () => {
   const indexerGrpcOracleApi = new IndexerGrpcOracleApi(endpoints.indexer);
 
   const oracleList = await indexerGrpcOracleApi.fetchOracleList();
-  console.log('injOracle', oracleList)
   const injOracle = oracleList.find((list) => list.symbol === "INJ");
   return injOracle?.price;
 };
-
-export const getTokenPrice = async (injectiveAddress: string, token: string) => {
-  console.log('here')
-  const [injPrice, balances, nativBalance] = await Promise.all([
-    getInjPriceFiat(),
-    getUserCW20Balances(injectiveAddress, token),
-    getNativeBalance(injectiveAddress),
-  ]);
-
-  if (!injPrice || !balances || !nativBalance) {
-    console.error("Failed to fetch required data.");
-    return;
-  }
-
-  const balance = balances.balance;
-  const price = Number(nativBalance) / Number(balance);
-
-  console.log(injPrice);
-  const tokenPriceInUSD = price * Number(injPrice);
-
-  console.log(
-    `1 ${balances.token.symbol} = ${price.toFixed(5)} INJ approximately $${tokenPriceInUSD.toFixed(
-      5
-    )
-    } `
-  );
-
-  return tokenPriceInUSD.toFixed(5);
-}

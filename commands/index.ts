@@ -195,9 +195,7 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 }
 
 export const buy = async (chatId: number) => {
-    console.log(1)
     if (await checkInfo(chatId)) {
-        console.log(2)
         const title = `Buy Token:
   
 Input token address to buy.`
@@ -331,7 +329,6 @@ Delete this message once you are done.`
 
 export const refer = async (chatId: number) => {
     const data = await fetch(chatId)
-    console.log(data)
     if (data) {
         const referralLink = data?.referralLink
         const referees = data?.referees!
@@ -458,29 +455,6 @@ To sell press one of the buttons below.`
                     [{ text: `Close`, callback_data: `cancel` }]
                 ]
                 return { title, content }
-                //                 const balance = await getTokenBalance(chatId, address)
-                //                 console.log(balance.value.uiAmount, result.decimals)
-                //                 const caption = `Name: ${result.name}
-                // Symbol: ${result.symbol}
-                // Address: <code>${address}</code>
-                // Decimals: ${result.decimals}
-
-                // Price: ${result.USDprice} $ / ${result.SOLprice} INJ
-
-                // Volume: 
-                // 5m: ${result.priceX.m5} %, 1h: ${result.priceX.h1} %, 6h: ${result.priceX.h6} %, 1d: ${result.priceX.h24} %
-                // Market Cap: ${result.mcap} $`
-
-                //                 const { sell1, sell2 } = await getSetting(chatId)
-                //                 const content = [
-                //                     [{ text: `Explorer`, url: `https://explorer.solana.com/address/${address}` }, { text: `Birdeye`, url: `https://birdeye.so/token/${address}?chain=solana` }],
-                //                     [{ text: `Sell ${sell1} %`, callback_data: `sellS:${address}` }, {
-                //                         text: `Sell ${sell2} %`, callback_data: `sellL:${address}`
-                //                     }, { text: `Sell X %`, callback_data: `sellX:${address}` }],
-                //                     [{ text: `Close`, callback_data: `cancel` }]
-                //                 ]
-                //                 return { caption, content }
-                return undefined
             }
         } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: 'Close', callback_data: 'cancel' }]] }
     } catch (e) {
