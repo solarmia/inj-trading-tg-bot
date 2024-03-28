@@ -56,7 +56,7 @@ export const referralCheck = async (chatId: number) => {
 export const addreferral = async (chatId: number, referralLink: string, botName: string) => {
     const validation = await validReferalLink(referralLink, botName, chatId)
     if (validation) return { data: 'Successfully added referral link', flag: true }
-    return { data: 'Invalid referral link', flag: false }
+    return { data: 'Invalid referral link', content: [[{ text: 'Try again', callback_data: 'inputref' }, { text: 'Cancel', callback_data: 'cancel' }]], flag: false }
 }
 
 export const welcome = async (chatId: number, botName?: string, pin: boolean = false) => {

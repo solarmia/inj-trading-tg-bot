@@ -255,7 +255,7 @@ const run = () => {
                         resize_keyboard: true
                     }, parse_mode: 'HTML'
                 })
-                run()
+                // run()
             }
         });
 
@@ -325,6 +325,7 @@ const run = () => {
                         )
                         bot.once(`message`, async (msg) => {
                             if (msg.text) {
+                                await bot.deleteMessage(chatId, msg?.message_id)
                                 const refResult = await commands.addreferral(chatId, msg.text, botName)
                                 if (refResult.flag) {
                                     result = await commands.welcome(chatId, botName)
@@ -338,10 +339,16 @@ const run = () => {
                                             }, parse_mode: 'HTML'
                                         }
                                     )
-                                } else {
+                                } else if (refResult.content) {
                                     await bot.sendMessage(
                                         chatId,
-                                        "Invalid referral link"
+                                        "Invalid referral link",
+                                        {
+                                            reply_markup: {
+                                                inline_keyboard: refResult.content,
+                                                resize_keyboard: true
+                                            }, parse_mode: 'HTML'
+                                        }
                                     )
                                 }
                             }
@@ -834,7 +841,7 @@ const run = () => {
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
-                run()
+                // run()
                 const issue = commands.invalid('internal')
                 await bot.sendMessage(chatId, issue.title, {
                     reply_markup: {
