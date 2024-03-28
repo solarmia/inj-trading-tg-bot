@@ -7,7 +7,6 @@ import axios from 'axios';
 import { userPath, settingsPath, fee, dexUrl, injAddr, treasury, rankPath, injExplorer, orderPath } from '../config';
 import { IContractData, IOrder, IPOrder, IRank, ISettings, Iuser, initialSetting, } from '../utils/type';
 import { getTokenDecimal, readData, swap, tokenInfo, writeData } from '../utils';
-import { bot } from "..";
 
 let userData: Iuser = {}
 let settings: ISettings = {}
@@ -576,7 +575,7 @@ export const placeLimitOrder = async () => {
             if (res) {
               orderData[key].splice(i, 1)
               writeData(orderData, orderPath)
-              bot.sendMessage(key, `Order ${i + 1} placed successfully`)
+              // bot.sendMessage(key, `Order ${i + 1} placed successfully`)
               i--
               continue
             }

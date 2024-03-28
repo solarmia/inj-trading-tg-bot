@@ -6,7 +6,6 @@ import { BotToken } from "./config";
 import { addPlaceOrder, init, placeLimitOrder } from "./commands/helper";
 
 const token = BotToken
-export const bot = new TelegramBot(token!, { polling: true });
 let botName: string
 let editText: string
 
@@ -15,6 +14,7 @@ placeLimitOrder()
 
 const run = () => {
     try {
+        const bot = new TelegramBot(token!, { polling: true });
         console.log("Bot started");
         bot.getMe().then(user => {
             botName = user.username!.toString()
