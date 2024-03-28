@@ -64,7 +64,8 @@ export const errorTitle: {
   [key: string]: string
 } = {
   inputBuyTokenAddress: `Token not found. Make sure address is correct.`,
-  inputTokenAmount: `Invalid amount. Make sure amount is correct.`,
+  inputINJAmount: `Invalid amount. Make sure amount is correct.`,
+  inputTokenAmount: `Invalid percentage. Make sure percentage is correct.`,
   inputTokenPrice: `Invalid price. Make sure price is correct.`,
   internal: `Invalid action, please try again.`,
   lowINJBalance: `Low balance in your wallet.`,

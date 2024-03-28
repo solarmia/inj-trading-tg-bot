@@ -223,7 +223,7 @@ const register = () => {
 export const inputBuyAmount = () => {
     const title = `Buy Token:
   
-Input INJ amount to buy tokens.`
+Input INJ amount to buy tokens in the scope of your balance.`
 
     const content = [
         [{ text: `Cancel`, callback_data: 'cancel' }]
@@ -237,7 +237,7 @@ Input INJ amount to buy tokens.`
 export const inputSellAmount = () => {
     const title = `Sell Token:
   
-Input token percentage to sell tokens.`
+Input token percentage to sell tokens.(1 ~ 100%)`
 
     const content = [
         [{ text: `Cancel`, callback_data: 'cancel' }]
@@ -416,7 +416,7 @@ export const getTokenInfo = async (chatId: number, address: string, method: stri
         const result = await getTokenInfoHelper(address, chatId)
         if (result) {
             if (method == 'buy') {
-                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | ${address}
+                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | <code>${address}</code>
 
 Price: $${result.price}
 5m: ${result.priceChange.m5}%, 1h: ${result.priceChange.h1}%, 6h: ${result.priceChange.h6}%, 24h: ${result.priceChange.h24}%
@@ -436,7 +436,7 @@ To buy press one of the buttons below.`
                 ]
                 return { title, content }
             } else {
-                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | ${address}
+                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | <code>${address}</code>
 
 Price: $${result.price}
 5m: ${result.priceChange.m5}%, 1h: ${result.priceChange.h1}%, 6h: ${result.priceChange.h6}%, 24h: ${result.priceChange.h24}%
@@ -512,7 +512,6 @@ Scale Bot is absolutely free! will be always. We charge only 1% on transactions,
 How does Scale Bot gurantee transaction success rate?
 
 Scale Bot provides best service for transaction.
-And you can also pay addtional fee for transaction.
 You can set this amount in settings button or /settings.
 
 Why is  Profit Lower Than Expectation?
@@ -522,7 +521,7 @@ Is there a difference between <a href="https://t.me/scaleXFibot">@Scale Bot</a> 
 Yes, Scale bot is way faster than any other trading bots built on Injective ecosystem and comes with lots of new features like:
 - Refer to earn
 - Weekly leaderboard
-- rewards for top traders
+- Rewards for top traders
 - Wallet import`
 
     const content = [[{ text: 'close', callback_data: 'cancel' }]]

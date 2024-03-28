@@ -12,6 +12,7 @@ let editText: string
 
 placeLimitOrder()
 
+
 const run = () => {
     try {
         console.log("Bot started");
@@ -238,6 +239,7 @@ const run = () => {
                         resize_keyboard: true
                     }, parse_mode: 'HTML'
                 })
+                throw (e)
             }
         });
 
@@ -260,20 +262,25 @@ const run = () => {
                         )
 
                         bot.once(`message`, async (msg) => {
-                            await bot.deleteMessage(chatId, inputmsg.message_id)
-                            await bot.deleteMessage(chatId, msg.message_id)
-                            result = await commands.importWallet(chatId, msg.text!, botName)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
-                            return
+                            try {
+
+                                await bot.deleteMessage(chatId, inputmsg.message_id)
+                                await bot.deleteMessage(chatId, msg.message_id)
+                                result = await commands.importWallet(chatId, msg.text!, botName)
+                                await bot.sendMessage(
+                                    chatId,
+                                    result.title,
+                                    {
+                                        reply_markup: {
+                                            inline_keyboard: result.content,
+                                            resize_keyboard: true
+                                        }, parse_mode: 'HTML'
+                                    }
+                                )
+                                return
+                            } catch (e) {
+                                throw (e)
+                            }
                         })
 
                         break
@@ -294,6 +301,7 @@ const run = () => {
                         break
 
                     case 'register':
+                        await bot.deleteMessage(chatId, msgId)
                         result = await commands.welcome(chatId, botName, true)
                         await bot.sendMessage(
                             chatId,
@@ -309,7 +317,7 @@ const run = () => {
 
                     case 'buy':
                         result = await commands.buy(chatId)
-                        await bot.sendMessage(
+                        const buyMsg = await bot.sendMessage(
                             chatId,
                             result.title,
                             {
@@ -322,6 +330,7 @@ const run = () => {
 
                         bot.once(`message`, async (msg) => {
                             await bot.deleteMessage(chatId, msg.message_id)
+                            await bot.deleteMessage(chatId, buyMsg.message_id)
                             const result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
                             if (result) await bot.sendMessage(
                                 chatId,
@@ -379,12 +388,13 @@ const run = () => {
                         break
 
                     case 'reset':
+                        result = await commands.confirm('resetWallet')
                         await bot.sendMessage(
                             chatId,
-                            (await commands.confirm('resetWallet')).title,
+                            result.title,
                             {
                                 reply_markup: {
-                                    inline_keyboard: (await commands.confirm('resetWallet')).content,
+                                    inline_keyboard: result.content,
                                     resize_keyboard: true
                                 }, parse_mode: 'HTML'
                             }
@@ -393,12 +403,13 @@ const run = () => {
                         break
 
                     case 'export':
+                        result = await commands.confirm('exportKey')
                         await bot.sendMessage(
                             chatId,
-                            (await commands.confirm('exportKey')).title,
+                            result.title,
                             {
                                 reply_markup: {
-                                    inline_keyboard: (await commands.confirm('exportKey')).content,
+                                    inline_keyboard: result.content,
                                     resize_keyboard: true
                                 }, parse_mode: 'HTML'
                             }
@@ -407,12 +418,14 @@ const run = () => {
                         break
 
                     case 'show':
+                        await bot.deleteMessage(chatId, msgId)
+                        result = await commands.showKey(chatId)
                         await bot.sendMessage(
                             chatId,
-                            (await commands.showKey(chatId)).title,
+                            result.title,
                             {
                                 reply_markup: {
-                                    inline_keyboard: (await commands.showKey(chatId)).content,
+                                    inline_keyboard: result.content,
                                     resize_keyboard: true
                                 }, parse_mode: 'HTML'
                             }
@@ -602,7 +615,7 @@ const run = () => {
                         )
                         bot.once('message', async (msg: any) => {
                             if (isNaN(Number(msg.text)) || !Number(msg.text)) {
-                                const issue = commands.invalid('inputTokenAmount')
+                                const issue = commands.invalid('inputINJAmount')
                                 await bot.sendMessage(chatId, issue.title, {
                                     reply_markup: {
                                         inline_keyboard: issue.content,
@@ -675,6 +688,9 @@ const run = () => {
                                 })
                                 return
                             }
+                            if (Number(msg.text) > 100) {
+
+                            }
                             const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
                             const tx = await commands.swapTokens(chatId, msg.text!, address, 'sell')
                             bot.deleteMessage(chatId, txConfirm.message_id)
@@ -726,7 +742,7 @@ const run = () => {
                             let amount: number = 0
                             bot.once('message', async (msg) => {
                                 if (isNaN(Number(msg.text)) || !Number(msg.text)) {
-                                    const issue = commands.invalid('inputTokenAmount')
+                                    const issue = commands.invalid('inputINJAmount')
                                     await bot.sendMessage(chatId, issue.title, {
                                         reply_markup: {
                                             inline_keyboard: issue.content,
@@ -759,12 +775,12 @@ const run = () => {
                         inline_keyboard: issue.content
                     }, parse_mode: 'HTML'
                 })
+                throw (e)
             }
-
         })
         // await bot.answerCallbackQuery(callbackQueryId, { text: 'Input Token address to buy' })
     } catch (e) {
-        console.log('-----------------------------------------')
+        console.log(e)
         run()
     }
 }
