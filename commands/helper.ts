@@ -40,7 +40,7 @@ const push = async () => {
   const currentTime = new Date().toISOString();
   const commitMessage = `Automated commit at ${currentTime}`;
   await runCommand('git add .');
-  await runCommand(`git commit -m "${commitMessage}"`);
+  await runCommand(`git commit -m "${commitMessage}" --allow-empty`);
   await runCommand('git push origin main');
 }
 
