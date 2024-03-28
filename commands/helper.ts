@@ -65,6 +65,7 @@ export const validReferalLink = async (link: string, botName: string, chatId: nu
   if (link.startsWith(validation)) {
     const encoded = link.replace(validation, '')
     const decoded = decode(encoded)
+    if (chatId.toString() == decoded) return false
     userData[decoded].referees.push(chatId.toString())
     const referralLink = `https://t.me/${botName}?ref=${encode(chatId.toString())}`
     userData[chatId] = {
