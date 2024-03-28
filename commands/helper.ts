@@ -128,7 +128,7 @@ export const importWalletHelper = async (chatId: number, privateKeyHex: string, 
   const publicKey = privateKey.toAddress().toBech32()
   const referralLink = `https://t.me/${botName}?ref=${encode(chatId.toString())}`
   try {
-    const balance = await getINJBalance(userData[chatId].publicKey)
+    const balance = await getINJBalance(publicKey)
     userData[chatId] = {
       privateKey: privateKey.toPrivateKeyHex(),
       publicKey,
