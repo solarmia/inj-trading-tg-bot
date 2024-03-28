@@ -2,3 +2,7 @@ node_modules
 .env
 todo
 injswap.ts
+rank.json
+settings.json
+user.json
+order.json

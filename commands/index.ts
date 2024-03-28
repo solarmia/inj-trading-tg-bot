@@ -1,6 +1,6 @@
 import { dojoPairUrl, injExplorer } from '../config';
 import { errorTitle } from '../utils/type';
-import { swapTokenHelper, checkInfo, createWalletHelper, fetch,  getSetting, getTokenInfoHelper, getTopTradersHelper, importWalletHelper, setSettings, validReferalLink, getAllTokenList } from './helper'
+import { swapTokenHelper, checkInfo, createWalletHelper, fetch, getSetting, getTokenInfoHelper, getTopTradersHelper, importWalletHelper, setSettings, validReferalLink, getAllTokenList } from './helper'
 
 interface IConfirm {
     [key: string]: {
@@ -61,7 +61,9 @@ export const addreferral = async (chatId: number, referralLink: string, botName:
 export const welcome = async (chatId: number, botName?: string, pin: boolean = false) => {
 
     if (await checkInfo(chatId)) {
-        const { publicKey, balance } = await fetch(chatId, botName)
+        const data = await fetch(chatId, botName)
+        const publicKey = data?.publicKey
+        const balance = data?.balance
 
         const title = `Welcome to Scale Bot
         
@@ -121,7 +123,9 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 }
 
 export const refresh = async (chatId: number) => {
-    const { publicKey, balance } = await fetch(chatId)
+    const data = await fetch(chatId)
+    const publicKey = data?.publicKey
+    const balance = data?.balance
 
     const title = `Successfully refreshed!
     
@@ -143,7 +147,9 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 }
 
 export const refreshWallet = async (chatId: number) => {
-    const { publicKey, balance } = await fetch(chatId)
+    const data = await fetch(chatId)
+    const publicKey = data?.publicKey
+    const balance = data?.balance
     const title = `Successfully refreshed!
     
 Your Scale Bot wallet address:
@@ -188,15 +194,29 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
     }
 }
 
-export const buy = async () => {
-    const title = `Buy Token:
+export const buy = async (chatId: number) => {
+    console.log(1)
+    if (await checkInfo(chatId)) {
+        console.log(2)
+        const title = `Buy Token:
   
 Input token address to buy.`
 
-    const content = [
-        [{ text: `Cancel`, callback_data: 'cancel' }]
-    ]
+        const content = [
+            [{ text: `Cancel`, callback_data: 'cancel' }]
+        ]
 
+        return {
+            title, content
+        }
+    } else return register()
+}
+
+const register = () => {
+    const title = `Please register your wallet first. Please click button to register.`
+    const content = [
+        [{ text: `Register`, callback_data: 'register' }]
+    ]
     return {
         title, content
     }
@@ -231,48 +251,54 @@ Input token percentage to sell tokens.`
 }
 
 export const sell = async (chatId: number) => {
-    const ownTokens = await getAllTokenList(chatId)
-    if (ownTokens.length) {
-        const title = `Token list you have in your wallet. Select token to sell.`
-        const content: {
-            text: string;
-            callback_data: string;
-        }[][] = []
-        ownTokens.map((val: any) => {
-            content.push([{ text: `Token: ${val.token.symbol}   Balance: ${val.balance / Math.pow(10, val.token.decimals)}`, callback_data: `sell:${val.contractAddress}` }])
-        })
-        content.push([{ text: `Close`, callback_data: `cancel` }])
-        return {
-            title, content
+    const data = await fetch(chatId)
+    if (data) {
+        const ownTokens = await getAllTokenList(chatId)
+        if (ownTokens.length) {
+            const title = `Token list you have in your wallet. Select token to sell.`
+            const content: {
+                text: string;
+                callback_data: string;
+            }[][] = []
+            ownTokens.map((val: any) => {
+                content.push([{ text: `Token: ${val.token.symbol}   Balance: ${val.balance / Math.pow(10, val.token.decimals)}`, callback_data: `sell:${val.contractAddress}` }])
+            })
+            content.push([{ text: `Close`, callback_data: `cancel` }])
+            return {
+                title, content
+            }
+        } else {
+            const title = `You have no tokens in your wallet.`
+            const content = [[{ text: `Close`, callback_data: `cancel` }]]
+            return {
+                title, content
+            }
         }
-    } else {
-        const title = `You have no tokens in your wallet.`
-        const content = [[{ text: `Close`, callback_data: `cancel` }]]
-        return {
-            title, content
-        }
-    }
+    } else return register()
 }
 
 export const wallet = async (chatId: number) => {
-    const { publicKey, balance } = await fetch(chatId)
-    const title = `Your Wallet:
+    const data = await fetch(chatId)
+    if (data) {
+        const { publicKey, balance } = data
+        const title = `Your Wallet:
     
 Your Scale Bot wallet address: <code>${publicKey}</code>
 INJ Balance: ${balance} INJ
 
 Tap to copy the address and send INJ to deposit.`
 
-    const content = [
-        [{ text: `View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `Refresh`, callback_data: `refreshwallet` }],
-        // [{ text: `Withdraw all INJ`, callback_data: `withdraw` }, { text: `Withdraw X INJ`, callback_data: `withdrawX` }],
-        [{ text: `Export Private Key`, callback_data: `export` }, { text: `Reset wallet`, callback_data: `reset` }],
-        [{ text: `Close`, callback_data: `cancel` }]
-    ]
+        const content = [
+            [{ text: `View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `Refresh`, callback_data: `refreshwallet` }],
+            // [{ text: `Withdraw all INJ`, callback_data: `withdraw` }, { text: `Withdraw X INJ`, callback_data: `withdrawX` }],
+            [{ text: `Export Private Key`, callback_data: `export` }, { text: `Reset wallet`, callback_data: `reset` }],
+            [{ text: `Close`, callback_data: `cancel` }]
+        ]
 
-    return {
-        title, content
-    }
+        return {
+            title, content
+        }
+    } else return register()
 }
 
 export const confirm = async (status: string) => {
@@ -286,7 +312,8 @@ export const confirm = async (status: string) => {
 }
 
 export const showKey = async (chatId: number) => {
-    const { privateKey } = await fetch(chatId)
+    const data = await fetch(chatId)
+    const privateKey = data?.privateKey
     const title = `Your Private Key is:
 
 <code>${privateKey}</code>
@@ -303,8 +330,13 @@ Delete this message once you are done.`
 }
 
 export const refer = async (chatId: number) => {
-    const { referralLink, referees, referrer } = await fetch(chatId)
-    const title = `Referral Link: 
+    const data = await fetch(chatId)
+    console.log(data)
+    if (data) {
+        const referralLink = data?.referralLink
+        const referees = data?.referees!
+        const referrer = data?.referrer
+        const title = `Referral Link: 
 <code>${referralLink}</code>
 
 Referrals counts: ${referees.length}
@@ -312,38 +344,28 @@ You can get reward if you refer someone
 
 ${referrer ? "You have been referred" : ""}`
 
-    const content = [
-        [{ text: `Close`, callback_data: `cancel` }]
-    ]
+        const content = [
+            [{ text: `Close`, callback_data: `cancel` }]
+        ]
 
-    return {
-        title, content
-    }
+        return {
+            title, content
+        }
+    } else return register()
 }
 
 export const settings = async (chatId: number) => {
     const title = `Settings
-
-GENERAL SETTINGS
-Scale Bot Announcements: Occasional announcements. Tap to toggle.
-Minimum Position Value: Minimum position value to show in portfolio. Will hide tokens below this threshhold. Tap to edit.
 
 BUTTONS CONFIG
 Customize your buy and sell buttons for buy token and manage position. Tap to edit.
 
 SLIPPAGE CONFIG
 Customize your slippage settings for buys and sells. Tap to edit.
-Max Price Impact is to protect against trades in extremely illiquid pools.
+Max Price Impact is to protect against trades in extremely illiquid pools.`
 
-TRANSACTION PRIORITY
-Increase your Transaction Priority to improve transaction speed. Select preset or tap to edit.`
-
-    const { announcement, buy1, buy2, sell1, sell2, slippage1, slippage2, priority, priorityAmount } = await getSetting(chatId)
+    const { buy1, buy2, sell1, sell2, slippage1, slippage2, } = await getSetting(chatId)
     const content = [
-        [{ text: `--- General settings ---`, callback_data: `general config` }],
-        [{ text: `Announcements`, callback_data: `announcement config` }, {
-            text: `${announcement ? '🟢 Enable' : '🔴 Disable'}`, callback_data: `announcement`
-        }],
         [{ text: `--- Buy Amount Config ---`, callback_data: `buy config` }],
         [{ text: `✎ Left: ${buy1} INJ`, callback_data: `buy1` }, {
             text: `✎ Right: ${buy2} INJ`, callback_data: `buy2`
@@ -355,10 +377,6 @@ Increase your Transaction Priority to improve transaction speed. Select preset o
         [{ text: `--- Slippage Percentage Config ---`, callback_data: `slippage config` }],
         [{ text: `✎ Buy: ${slippage1} %`, callback_data: `slippage1` }, {
             text: `✎ Sell: ${slippage2} %`, callback_data: `slippage2`
-        }],
-        [{ text: `--- Transaction Priority Config ---`, callback_data: `priority config` }],
-        [{ text: `⇌ ${priority}`, callback_data: `priority` }, {
-            text: `✎ ${priorityAmount} INJ`, callback_data: `priorityAmount`
         }],
         [{ text: `Close`, callback_data: `cancel` }]
     ]
@@ -369,26 +387,15 @@ Increase your Transaction Priority to improve transaction speed. Select preset o
 export const newSettings = async (chatId: number, category: string, value?: any) => {
     const title = `Settings
 
-GENERAL SETTINGS
-Scale Bot Announcements: Occasional announcements. Tap to toggle.
-Minimum Position Value: Minimum position value to show in portfolio. Will hide tokens below this threshhold. Tap to edit.
-
 BUTTONS CONFIG
 Customize your buy and sell buttons for buy token and manage position. Tap to edit.
 
 SLIPPAGE CONFIG
 Customize your slippage settings for buys and sells. Tap to edit.
-Max Price Impact is to protect against trades in extremely illiquid pools.
-
-TRANSACTION PRIORITY
-Increase your Transaction Priority to improve transaction speed. Select preset or tap to edit.`
+Max Price Impact is to protect against trades in extremely illiquid pools.`
 
     const { announcement, buy1, buy2, sell1, sell2, slippage1, slippage2, priority, priorityAmount } = await setSettings(chatId, category, value)
     const content = [
-        [{ text: `--- General settings ---`, callback_data: `general config` }],
-        [{ text: `Announcements`, callback_data: `announcement` }, {
-            text: `${announcement ? '🟢 Enable' : '🔴 Disable'}`, callback_data: `announcement`
-        }],
         [{ text: `--- Buy Amount Config ---`, callback_data: `buy config` }],
         [{ text: `✎ Left: ${buy1} INJ`, callback_data: `buy1` }, {
             text: `✎ Right: ${buy2} INJ`, callback_data: `buy2`
@@ -400,10 +407,6 @@ Increase your Transaction Priority to improve transaction speed. Select preset o
         [{ text: `--- Slippage Percentage Config ---`, callback_data: `slippage config` }],
         [{ text: `✎ Buy: ${slippage1} %`, callback_data: `slippage1` }, {
             text: `✎ Sell: ${slippage2} %`, callback_data: `slippage2`
-        }],
-        [{ text: `--- Transaction Priority Config ---`, callback_data: `priority config` }],
-        [{ text: `⇌ ${priority}`, callback_data: `priority` }, {
-            text: `✎ ${priorityAmount} INJ`, callback_data: `priorityAmount`
         }],
         [{ text: `Close`, callback_data: `cancel` }]
     ]
@@ -416,7 +419,7 @@ export const getTokenInfo = async (chatId: number, address: string, method: stri
         const result = await getTokenInfoHelper(address, chatId)
         if (result) {
             if (method == 'buy') {
-                const caption = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | ${address}
+                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | ${address}
 
 Price: $${result.price}
 5m: ${result.priceChange.m5}%, 1h: ${result.priceChange.h1}%, 6h: ${result.priceChange.h6}%, 24h: ${result.priceChange.h24}%
@@ -434,9 +437,9 @@ To buy press one of the buttons below.`
                     [{ text: `Limit Order`, callback_data: `limitB:${address}` }],
                     [{ text: `Close`, callback_data: `cancel` }]
                 ]
-                return { caption, content }
+                return { title, content }
             } else {
-                const caption = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | ${address}
+                const title = `${result.tokenInfo.name} | ${result.tokenInfo.symbol} | ${address}
 
 Price: $${result.price}
 5m: ${result.priceChange.m5}%, 1h: ${result.priceChange.h1}%, 6h: ${result.priceChange.h6}%, 24h: ${result.priceChange.h24}%
@@ -454,7 +457,7 @@ To sell press one of the buttons below.`
                     }, { text: `Sell X %`, callback_data: `sellX:${address}` }],
                     [{ text: `Close`, callback_data: `cancel` }]
                 ]
-                return { caption, content }
+                return { title, content }
                 //                 const balance = await getTokenBalance(chatId, address)
                 //                 console.log(balance.value.uiAmount, result.decimals)
                 //                 const caption = `Name: ${result.name}
@@ -479,7 +482,7 @@ To sell press one of the buttons below.`
                 //                 return { caption, content }
                 return undefined
             }
-        } else return undefined
+        } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: 'Close', callback_data: 'cancel' }]] }
     } catch (e) {
         console.log(e)
         return undefined
@@ -500,8 +503,8 @@ export const swapTokens = async (chatId: number, value: string, address: string,
 }
 
 export const checkINJBalance = async (chatId: number, value: string) => {
-    const { balance } = await fetch(chatId)
-    console.log(balance, value)
+    const data = await fetch(chatId)
+    const balance = data?.balance!
     return (balance < Number(value))
 }
 
@@ -518,7 +521,7 @@ Any CW20 token that is a INJ pair on Dojoswap . We pick up pairs instantly, and 
 
 How can I see how much money I've made from referrals?
 
-Check the referrals button or type /referrals to see your payment in Scale world !
+Check the referrals button or type /referral to see your payment in Scale world !
 
 How can I create a new wallet on Scale Bot?
 
@@ -547,7 +550,9 @@ Yes, Scale bot is way faster than any other trading bots built on Injective ecos
 - Weekly leaderboard
 - rewards for top traders
 - Wallet import`
-    return title
+
+    const content = [[{ text: 'close', callback_data: 'cancel' }]]
+    return { title, content }
 }
 
 export const leaderBoard = async () => {

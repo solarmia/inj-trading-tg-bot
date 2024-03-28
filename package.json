@@ -1,8 +1,8 @@
 {
-  "name": "whale_bot",
+  "name": "scale",
   "version": "1.0.0",
-  "description": "Whale Bot",
-  "main": "bot.ts",
+  "description": "Injective trading bot",
+  "main": "index.ts",
   "author": "Gru",
   "license": "MIT",
   "dependencies": {

@@ -74,17 +74,19 @@ const getINJBalance = async (adderss: string) => {
 
 export const fetch = async (chatId: number, botName?: string) => {
   try {
-    const balance = await getINJBalance(userData[chatId].publicKey)
-    userData[chatId].balance = balance
-    writeData(userData, userPath)
-    return {
-      publicKey: userData[chatId].publicKey,
-      privateKey: userData[chatId].privateKey,
-      referralLink: userData[chatId].referralLink,
-      balance,
-      referees: userData[chatId].referees,
-      referrer: userData[chatId].referrer
-    }
+    if (userData[chatId] && userData[chatId].publicKey) {
+      const balance = await getINJBalance(userData[chatId].publicKey)
+      userData[chatId].balance = balance
+      writeData(userData, userPath)
+      return {
+        publicKey: userData[chatId].publicKey,
+        privateKey: userData[chatId].privateKey,
+        referralLink: userData[chatId].referralLink,
+        balance,
+        referees: userData[chatId].referees,
+        referrer: userData[chatId].referrer
+      }
+    } else return undefined
   } catch (e) {
     return {
       publicKey: userData[chatId].publicKey,
@@ -230,17 +232,21 @@ export const getTokenInfoHelper = async (address: string, chatId: number) => {
   const dex = (await axios.get(`${dexUrl}/${address}`)).data
   if (!('pairs' in dex)) return undefined
   const pairs = dex.pairs
-  for (let i = 0; i < pairs.length; i++) {
-    if (pairs[i].chainId == 'injective' && pairs[i].dexId == 'dojoswap' && ((pairs[i].baseToken.address == injAddr && pairs[i].quoteToken.address == address) || (pairs[i].quoteToken.address == injAddr && pairs[i].baseToken.address == address))) {
-      const tokenInfo = pairs[i].baseToken.address == address ? pairs[i].baseToken : pairs[i].quoteToken
-      const price = pairs[i].priceUsd
-      const priceChange = pairs[i].priceChange
-      const fdv = pairs[i].fdv
-      const pairAddress = pairs[i].pairAddress
-      const { balance } = await fetch(chatId)
-      return { tokenInfo, price, priceChange, fdv, pairAddress, balance }
+  if (pairs && pairs.length) {
+    for (let i = 0; i < pairs.length; i++) {
+      if (pairs[i].chainId == 'injective' && pairs[i].dexId == 'dojoswap' && ((pairs[i].baseToken.address == injAddr && pairs[i].quoteToken.address == address) || (pairs[i].quoteToken.address == injAddr && pairs[i].baseToken.address == address))) {
+        const tokenInfo = pairs[i].baseToken.address == address ? pairs[i].baseToken : pairs[i].quoteToken
+        const price = pairs[i].priceUsd
+        const priceChange = pairs[i].priceChange
+        const fdv = pairs[i].fdv
+        const pairAddress = pairs[i].pairAddress
+        const data = await fetch(chatId)
+        const balance = data?.balance
+        return { tokenInfo, price, priceChange, fdv, pairAddress, balance }
+      }
     }
-  }
+    return undefined
+  } else return undefined
 }
 
 export const swapTokenHelper = async (chatId: number, value: string, tokenAddr: string, type: string) => {
@@ -505,7 +511,7 @@ export const getTopTradersHelper = async () => {
   const content = []
   sortedData.map((item) => {
     const address = userData[item[0]].publicKey
-    const shorAddress = address.slice(0, 8) + '...' + address.slice(-5)
+    const shorAddress = address.slice(0, 8) + ' ... ' + address.slice(-5)
     const volume = (item[1] / Math.pow(10, 18)).toFixed(6)
     content.push([{ text: `${shorAddress} : ${volume} INJ`, url: `${injExplorer}/account/${userData[item[0]].publicKey}` }])
   })

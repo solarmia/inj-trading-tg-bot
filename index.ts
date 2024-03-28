@@ -125,7 +125,7 @@ bot.on(`message`, async (msg) => {
 
             case '/buy':
                 await bot.deleteMessage(chatId, msgId)
-                result = await commands.buy()
+                result = await commands.buy(chatId)
                 await bot.sendMessage(
                     chatId,
                     result.title,
@@ -136,19 +136,17 @@ bot.on(`message`, async (msg) => {
                         }, parse_mode: 'HTML'
                     }
                 )
-
                 bot.once(`message`, async (msg) => {
                     result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
                     if (result) await bot.sendMessage(
                         chatId,
-                        result.caption,
+                        result.title,
                         {
                             reply_markup: {
                                 inline_keyboard: result.content,
                                 resize_keyboard: true
                             }, parse_mode: 'HTML'
                         },
-
                     )
                     else {
                         const issue = commands.invalid('inputBuyTokenAddress')
@@ -213,12 +211,19 @@ bot.on(`message`, async (msg) => {
                 result = commands.help()
                 await bot.sendMessage(
                     chatId,
-                    result
+                    result.title,
+                    {
+                        reply_markup: {
+                            inline_keyboard: result.content,
+                            resize_keyboard: true
+                        }, parse_mode: 'HTML'
+                    }
                 )
 
                 break
 
             default:
+                await bot.deleteMessage(chatId, msgId)
                 break
         }
     } catch (e) {
@@ -285,13 +290,28 @@ bot.on('callback_query', async (query: CallbackQuery) => {
                 )
                 break
 
-            case 'buy':
+            case 'register':
+                result = await commands.welcome(chatId, botName, true)
                 await bot.sendMessage(
                     chatId,
-                    (await commands.buy()).title,
+                    result.title,
                     {
                         reply_markup: {
-                            inline_keyboard: (await commands.buy()).content,
+                            inline_keyboard: result.content,
+                            resize_keyboard: true
+                        }, parse_mode: 'HTML'
+                    }
+                )
+                break
+
+            case 'buy':
+                result = await commands.buy(chatId)
+                await bot.sendMessage(
+                    chatId,
+                    result.title,
+                    {
+                        reply_markup: {
+                            inline_keyboard: result.content,
                             resize_keyboard: true
                         }, parse_mode: 'HTML'
                     }
@@ -301,7 +321,7 @@ bot.on('callback_query', async (query: CallbackQuery) => {
                     const result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
                     if (result) await bot.sendMessage(
                         chatId,
-                        result.caption,
+                        result.title,
                         {
                             reply_markup: {
                                 inline_keyboard: result.content,
@@ -340,12 +360,13 @@ bot.on('callback_query', async (query: CallbackQuery) => {
                 break
 
             case 'wallet':
+                result = await commands.wallet(chatId)
                 await bot.sendMessage(
                     chatId,
-                    (await commands.wallet(chatId)).title,
+                    result.title,
                     {
                         reply_markup: {
-                            inline_keyboard: (await commands.wallet(chatId)).content,
+                            inline_keyboard: result.content,
                             resize_keyboard: true
                         }, parse_mode: 'HTML'
                     }
@@ -396,12 +417,13 @@ bot.on('callback_query', async (query: CallbackQuery) => {
                 break
 
             case 'refer':
+                result = await commands.refer(chatId)
                 await bot.sendMessage(
                     chatId,
-                    (await commands.refer(chatId)).title,
+                    result.title,
                     {
                         reply_markup: {
-                            inline_keyboard: (await commands.refer(chatId)).content,
+                            inline_keyboard: result.content,
                             resize_keyboard: true
                         }, parse_mode: 'HTML'
                     }
@@ -542,7 +564,13 @@ bot.on('callback_query', async (query: CallbackQuery) => {
                 result = commands.help()
                 await bot.sendMessage(
                     chatId,
-                    result
+                    result.title,
+                    {
+                        reply_markup: {
+                            inline_keyboard: result.content,
+                            resize_keyboard: true
+                        }, parse_mode: 'HTML'
+                    }
                 )
                 break
 
@@ -610,7 +638,7 @@ bot.on('callback_query', async (query: CallbackQuery) => {
             const result = await commands.getTokenInfo(chatId, address, 'sell')
             if (result) await bot.sendMessage(
                 chatId,
-                result.caption,
+                result.title,
                 {
                     reply_markup: {
                         inline_keyboard: result.content,

@@ -8,6 +8,6 @@
         "slippage1": 10,
         "slippage2": 20,
         "priority": "Medium",
-        "priorityAmount": 0.0001
+        "priorityAmount": 0.001
     }
 }
