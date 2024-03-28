@@ -188,9 +188,8 @@ export const checkValidAddr = async (addr: string) => {
 }
 
 export const getSetting = async (chatId: number) => {
-  if ((chatId in settings)) {
-    settings = await readData(settingsPath)
-  } else {
+  settings = await readData(settingsPath)
+  if (!(chatId in settings)) {
     settings[chatId] = initialSetting
     writeData(settings, settingsPath)
   }

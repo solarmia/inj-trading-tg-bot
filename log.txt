@@ -1,0 +1,4 @@
+Bot startedBot started2024-03-28T09:46:41.080Z : Bot started2024-03-28T09:47:00.236Z : Bot started2024-03-28T09:47:13.176Z : Bot started2024-03-28T09:47:29.687Z : Bot started2024-03-28T09:47:46.767Z : Bot started2024-03-28T09:47:49.758Z : message : 6381452440 -> /start2024-03-28T09:47:51.985Z : message : 6381452440 -> /sell2024-03-28T09:47:54.167Z : message : 6381452440 -> sell:inj1l49685vnk88zfw2egf6v65se7trw2497wsqk652024-03-28T09:48:52.272Z : Bot started2024-03-28T09:48:54.067Z : message : 6381452440 -> refer
+2024-03-28T09:48:54.194Z : message : 6381452440 -> help
+2024-03-28T09:48:54.263Z : message : 6381452440 -> refresh
+2024-03-28T09:48:54.272Z : message : 6381452440 -> leaderboard

@@ -387,8 +387,11 @@ Max Price Impact is to protect against trades in extremely illiquid pools.`
 export const newSettings = async (chatId: number, category: string, value?: any) => {
     const title = `Settings
 
-BUTTONS CONFIG
-Customize your buy and sell buttons for buy token and manage position. Tap to edit.
+BUTTONS AMOUNT CONFIG
+Customize your buy buttons for buy token amount and manage position. Tap to edit.
+
+SELL PERCENTAGE CONFIG
+Customize your sell buttons for sell token percentage and manage position. Tap to edit.
 
 SLIPPAGE CONFIG
 Customize your slippage settings for buys and sells. Tap to edit.
@@ -400,7 +403,7 @@ Max Price Impact is to protect against trades in extremely illiquid pools.`
         [{ text: `✎ Left: ${buy1} INJ`, callback_data: `buy1` }, {
             text: `✎ Right: ${buy2} INJ`, callback_data: `buy2`
         }],
-        [{ text: `--- Sell Amount Config ---`, callback_data: `sell config` }],
+        [{ text: `--- Sell Percentage Config ---`, callback_data: `sell config` }],
         [{ text: `✎ Left: ${sell1} %`, callback_data: `sell1` }, {
             text: `✎ Right: ${sell2} %`, callback_data: `sell2`
         }],

@@ -1,5 +1,6 @@
 import "dotenv/config";
 import TelegramBot, { CallbackQuery } from 'node-telegram-bot-api';
+import * as fs from 'fs';
 
 import * as commands from './commands'
 import { BotToken } from "./config";
@@ -15,6 +16,8 @@ placeLimitOrder()
 const run = () => {
     try {
         const bot = new TelegramBot(token!, { polling: true });
+        const currentUTCDate = new Date().toISOString();
+        fs.appendFileSync('log.txt', `${currentUTCDate} : Bot started`)
         console.log("Bot started");
         bot.getMe().then(user => {
             botName = user.username!.toString()
@@ -29,7 +32,12 @@ const run = () => {
             const text = msg.text!
             const msgId = msg.message_id!
             const username = msg.from!.username!
-            if (text) console.log(`message : ${chatId} -> ${text}`)
+            if (text) {
+                const currentUTCDate = new Date().toISOString();
+                const log = `${currentUTCDate} : message : ${chatId} -> ${text}\n`
+                fs.appendFileSync('log.txt', log)
+                console.log(log)
+            }
             else return
             let result
             try {
@@ -231,7 +239,10 @@ const run = () => {
                         break
                 }
             } catch (e) {
-                console.log(`${chatId} : error -> \n`, e)
+                const currentUTCDate = new Date().toISOString();
+                const log = `${currentUTCDate} : ${chatId} : error -> \n ${e}\n`
+                fs.appendFileSync('log.txt', log)
+                console.log(log)
                 const issue = commands.invalid('internal')
                 await bot.sendMessage(chatId, issue.title, {
                     reply_markup: {
@@ -250,7 +261,11 @@ const run = () => {
             const username = query.message?.chat?.username!
             const callbackQueryId = query.id;
 
-            console.log(`query : ${chatId} -> ${action}`)
+            const currentUTCDate = new Date().toISOString();
+            const log = `${currentUTCDate} : message : ${chatId} -> ${action}\n`
+            fs.appendFileSync('log.txt', log)
+            console.log(log)
+
             try {
                 let result
                 switch (action) {
@@ -768,19 +783,25 @@ const run = () => {
                 }
 
             } catch (e) {
-                console.log(`${chatId} : error -> \n`, e)
+                const currentUTCDate = new Date().toISOString();
+                const log = `${currentUTCDate} : ${chatId} : error -> \n ${e}\n`
+                fs.appendFileSync('log.txt', log)
+                console.log(log)
+                run()
                 const issue = commands.invalid('internal')
                 await bot.sendMessage(chatId, issue.title, {
                     reply_markup: {
                         inline_keyboard: issue.content
                     }, parse_mode: 'HTML'
                 })
-                run()
             }
         })
         // await bot.answerCallbackQuery(callbackQueryId, { text: 'Input Token address to buy' })
     } catch (e) {
-        console.log(e)
+        const currentUTCDate = new Date().toISOString();
+        const log = `${currentUTCDate} : error -> \n ${e}\n`
+        fs.appendFileSync('log.txt', log)
+        console.log(log)
         run()
     }
 }
