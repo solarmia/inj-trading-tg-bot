@@ -244,18 +244,13 @@ const run = () => {
                         break
                 }
             } catch (e) {
+                console.log('1111111111111111')
+
                 const currentUTCDate = new Date().toISOString();
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
-                const issue = commands.invalid('internal')
-                await bot.sendMessage(chatId, issue.title, {
-                    reply_markup: {
-                        inline_keyboard: issue.content,
-                        resize_keyboard: true
-                    }, parse_mode: 'HTML'
-                })
-                // run()
+                run()
             }
         });
 
@@ -275,7 +270,7 @@ const run = () => {
                 let result
                 switch (action) {
                     case 'import':
-                        await bot.sendMessage(
+                        const inputMsg = await bot.sendMessage(
                             chatId,
                             `Please input your private key`,
                             {
@@ -287,19 +282,25 @@ const run = () => {
                         )
 
                         bot.once(`message`, async (msg) => {
-                            await bot.deleteMessage(chatId, msg.message_id)
-                            result = await commands.importWallet(chatId, msg.text!, botName)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
-                            return
+                            try {
+                                await bot.deleteMessage(chatId, inputMsg.message_id)
+                                await bot.deleteMessage(chatId, msg.message_id)
+                                result = await commands.importWallet(chatId, msg.text!, botName)
+                                await bot.sendMessage(
+                                    chatId,
+                                    result.title,
+                                    {
+                                        reply_markup: {
+                                            inline_keyboard: result.content,
+                                            resize_keyboard: true
+                                        }, parse_mode: 'HTML'
+                                    }
+                                )
+                                return
+                            } catch (e) {
+                                bot.stopPolling()
+                                run()
+                            }
                         })
 
                         break
@@ -837,17 +838,13 @@ const run = () => {
                 }
 
             } catch (e) {
+                console.log('-------------------------')
                 const currentUTCDate = new Date().toISOString();
                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
                 fs.appendFileSync('log.txt', log)
                 console.log(log)
-                // run()
-                const issue = commands.invalid('internal')
-                await bot.sendMessage(chatId, issue.title, {
-                    reply_markup: {
-                        inline_keyboard: issue.content
-                    }, parse_mode: 'HTML'
-                })
+                bot.stopPolling()
+                run()
             }
         })
         // await bot.answerCallbackQuery(callbackQueryId, { text: 'Input Token address to buy' })
