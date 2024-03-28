@@ -25,11 +25,11 @@ const runCommand = (command: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        console.error(`Error executing command '${command}': ${error}`);
+        // console.error(`Error executing command '${command}': ${error}`);
         reject(error);
       } else {
-        console.log(stdout);
-        console.error(stderr);
+        // console.log(stdout);
+        // console.error(stderr);
         resolve();
       }
     });
@@ -52,7 +52,6 @@ export const init = async () => {
     settings = await readData(settingsPath)
   } catch (e) {
     settings = {}
-    writeData(settingsPath, settings)
   }
 }
 
@@ -552,20 +551,6 @@ export const getAllTokenList = async (chatId: number) => {
   const address = userData[chatId].publicKey
   const tokenList = await indexerRestExplorerApi.fetchCW20BalancesNoThrow(address)
   return tokenList
-  // const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address)
-  // console.log(data)
-  // console.log(portfolio.bankBalancesList)
-  // let balance = 0
-  // for (let i = 0; i < portfolio.bankBalancesList.length; i++) {
-  //   if (portfolio.bankBalancesList[i].denom === 'inj') {
-  //     balance += Number(portfolio.bankBalancesList[i].amount) / 1e18
-  //   } else if (portfolio.bankBalancesList[i].denom === 'usdc') {
-  //     const tokenInfo = await tokenInfo('usdc')
-  //     const decimals = tokenInfo.decimals
-  //     const amount = Number(portfolio.bankBalancesList[i].amount) / Math.pow(10, decimals)
-  //     balance += amount
-  //   }
-  // }
 }
 
 export const addPlaceOrder = async (chatId: number, price: number, amount: number, address: string, type: 'buy' | 'sell') => {
@@ -589,7 +574,7 @@ export const addPlaceOrder = async (chatId: number, price: number, amount: numbe
 
 export const placeLimitOrder = async () => {
   setInterval(async () => {
-    // push()
+    push()
     orderData = await readData(orderPath)
     for (const key in orderData) {
       if (Object.prototype.hasOwnProperty.call(orderData, key)) {
@@ -755,9 +740,6 @@ export const checkPossibleOrder = async (data: IPOrder) => {
     }
   }
 }
-
-
-// ------------------------------------
 
 const getInjPriceFiat = async () => {
   const indexerGrpcOracleApi = new IndexerGrpcOracleApi(endpoints.indexer);
