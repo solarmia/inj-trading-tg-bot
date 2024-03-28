@@ -25,11 +25,8 @@ const runCommand = (command: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        // console.error(`Error executing command '${command}': ${error}`);
         reject(error);
       } else {
-        // console.log(stdout);
-        // console.error(stderr);
         resolve();
       }
     });
