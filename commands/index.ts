@@ -206,7 +206,9 @@ export const buy = async (chatId: number) => {
     if (await checkInfo(chatId)) {
         const title = `Buy Token:
   
-Input token address to buy.`
+Input cw20 token address to buy. 
+
+ex: inj123456789abc...`
 
         const content = [
             [{ text: `Cancel`, callback_data: 'cancel' }]
