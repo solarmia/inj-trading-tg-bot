@@ -54,6 +54,8 @@ exports.addreferral = addreferral;
 const welcome = async (chatId, botName, pin = false) => {
     if (await (0, helper_1.checkInfo)(chatId)) {
         const data = await (0, helper_1.fetch)(chatId, botName);
+        if (!data)
+            return undefined;
         const publicKey = data === null || data === void 0 ? void 0 : data.publicKey;
         const balance = data === null || data === void 0 ? void 0 : data.balance;
         const title = `Welcome to Scale Bot
@@ -165,8 +167,10 @@ Tap to copy the address and send INJ to deposit.`;
 };
 exports.refreshWallet = refreshWallet;
 const createWallet = async (chatId, botName) => {
-    const { publicKey, balance } = await (0, helper_1.createWalletHelper)(chatId, botName);
-    const title = `Successfully Created!
+    const data = await (0, helper_1.createWalletHelper)(chatId, botName);
+    if (data) {
+        const { publicKey, balance } = data;
+        const title = `Successfully Created!
     
 To get started with trading, send some INJ to your Scale Bot wallet address:
 <code>${publicKey}</code>
@@ -178,10 +182,11 @@ Once done tap refresh and your balance will appear here.
 To buy a token just enter a token address.
 
 For more info on your wallet and to retrieve your private key, tap the wallet button below. We guarantee the safety of user funds on ScaleXFi Bot, but if you expose your private key your funds will not be safe.`;
-    const content = mainContent();
-    return {
-        title, content
-    };
+        const content = mainContent();
+        return {
+            title, content
+        };
+    }
 };
 exports.createWallet = createWallet;
 const buy = async (chatId) => {
@@ -471,7 +476,7 @@ const swapTokens = async (chatId, value, address, type) => {
 exports.swapTokens = swapTokens;
 const checkINJBalance = async (chatId, value) => {
     const data = await (0, helper_1.fetch)(chatId);
-    const balance = data === null || data === void 0 ? void 0 : data.balance;
+    const balance = data && (data === null || data === void 0 ? void 0 : data.balance) ? data === null || data === void 0 ? void 0 : data.balance : 0;
     return (balance < Number(value));
 };
 exports.checkINJBalance = checkINJBalance;

@@ -243,6 +243,11 @@ const run = () => {
                         break;
                     case 'create':
                         result = await commands.createWallet(chatId, botName);
+                        if (!result) {
+                            const issue = commands.invalid('internal');
+                            await (0, helper_1.sendSyncMsg)(bot, chatId, issue);
+                            return;
+                        }
                         await (0, helper_1.sendSyncMsg)(bot, chatId, result);
                         break;
                     case 'register':
@@ -344,8 +349,14 @@ const run = () => {
                         await (0, helper_1.sendSyncMsg)(bot, chatId, result);
                         break;
                     case 'pin':
+                        result = await commands.welcome(chatId, botName, true);
+                        if (!result) {
+                            const issue = commands.invalid('internal');
+                            await (0, helper_1.sendSyncMsg)(bot, chatId, issue);
+                            return;
+                        }
                         await bot.editMessageReplyMarkup({
-                            inline_keyboard: (await commands.welcome(chatId, botName, true)).content
+                            inline_keyboard: result.content
                         }, {
                             chat_id: chatId,
                             message_id: msgId
@@ -353,8 +364,14 @@ const run = () => {
                         await bot.pinChatMessage(chatId, msgId);
                         break;
                     case 'unpin':
+                        result = await commands.welcome(chatId, botName, false);
+                        if (!result) {
+                            const issue = commands.invalid('internal');
+                            await (0, helper_1.sendSyncMsg)(bot, chatId, issue);
+                            return;
+                        }
                         await bot.editMessageReplyMarkup({
-                            inline_keyboard: (await commands.welcome(chatId, botName, false)).content
+                            inline_keyboard: result.content
                         }, {
                             chat_id: chatId,
                             message_id: msgId

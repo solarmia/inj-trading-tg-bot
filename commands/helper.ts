@@ -95,17 +95,14 @@ export const init = async () => {
   userData = await readData(userPath)
   rankData = await readData(rankPath)
   orderData = await readData(orderPath)
-  try {
-    settings = await readData(settingsPath)
-  } catch (e) {
-    settings = {}
-  }
+  settings = await readData(settingsPath)
 }
 
 export const checkInfo = async (chatId: number) => {
   if (!(chatId.toString() in settings)) {
     settings[chatId] = initialSetting
-    writeData(settings, settingsPath)
+    const result = await writeData(settings, settingsPath)
+    if (result) return false
   }
   if (chatId.toString() in userData && userData[chatId].privateKey) return true
   else false
@@ -129,7 +126,8 @@ export const validReferalLink = async (link: string, botName: string, chatId: nu
       buy: 0,
       sell: 0
     }
-    writeData(userData, userPath)
+    const result = await writeData(userData, userPath)
+    if (result) return false
     return true
   } else {
     return false
@@ -151,7 +149,8 @@ export const fetch = async (chatId: number, botName?: string) => {
     if (userData[chatId] && userData[chatId].publicKey) {
       const balance = await getINJBalance(userData[chatId].publicKey)
       userData[chatId].balance = balance
-      writeData(userData, userPath)
+      const result = await writeData(userData, userPath)
+      if (result) return false
       return {
         publicKey: userData[chatId].publicKey,
         privateKey: userData[chatId].privateKey,
@@ -189,7 +188,8 @@ export const createWalletHelper = async (chatId: number, botName: string) => {
     buy: 0,
     sell: 0
   }
-  writeData(userData, userPath)
+  const result = await writeData(userData, userPath)
+  if (result) return false
   return {
     publicKey,
     balance: 0
@@ -316,7 +316,7 @@ export const getTokenInfoHelper = async (address: string, chatId: number) => {
         const fdv = pairs[i].fdv
         const pairAddress = pairs[i].pairAddress
         const data = await fetch(chatId)
-        const balance = data?.balance
+        const balance = (data && data?.balance) ? data?.balance : 0
         return { tokenInfo, price, priceChange, fdv, pairAddress, balance }
       }
     }

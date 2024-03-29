@@ -20,15 +20,20 @@ const readData = async (Path) => {
 };
 exports.readData = readData;
 const writeData = async (data, path) => {
-    const dataJson = JSON.stringify(data, null, 4);
-    fs_1.default.writeFile(path, dataJson, (err) => {
-        if (err) {
-            console.log('Error writing file:', err);
-        }
-        else {
-            console.log(`wrote file ${path}`);
-        }
-    });
+    try {
+        const dataJson = JSON.stringify(data, null, 4);
+        fs_1.default.writeFile(path, dataJson, (err) => {
+            if (err) {
+                console.log('Error writing file:', err);
+            }
+            else {
+                console.log(`wrote file ${path}`);
+            }
+        });
+    }
+    catch (e) {
+        return true;
+    }
 };
 exports.writeData = writeData;
 const tokenInfo = async (addr) => {

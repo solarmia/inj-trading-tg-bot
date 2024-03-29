@@ -63,6 +63,7 @@ export const welcome = async (chatId: number, botName?: string, pin: boolean = f
 
     if (await checkInfo(chatId)) {
         const data = await fetch(chatId, botName)
+        if (!data) return undefined
         const publicKey = data?.publicKey
         const balance = data?.balance
 
@@ -180,9 +181,11 @@ Tap to copy the address and send INJ to deposit.`
 }
 
 export const createWallet = async (chatId: number, botName: string) => {
-    const { publicKey, balance } = await createWalletHelper(chatId, botName)
+    const data = await createWalletHelper(chatId, botName)
+    if (data) {
+        const { publicKey, balance } = data
 
-    const title = `Successfully Created!
+        const title = `Successfully Created!
     
 To get started with trading, send some INJ to your Scale Bot wallet address:
 <code>${publicKey}</code>
@@ -195,10 +198,11 @@ To buy a token just enter a token address.
 
 For more info on your wallet and to retrieve your private key, tap the wallet button below. We guarantee the safety of user funds on ScaleXFi Bot, but if you expose your private key your funds will not be safe.`
 
-    const content = mainContent()
+        const content = mainContent()
 
-    return {
-        title, content
+        return {
+            title, content
+        }
     }
 }
 
@@ -496,7 +500,7 @@ export const swapTokens = async (chatId: number, value: string, address: string,
 
 export const checkINJBalance = async (chatId: number, value: string) => {
     const data = await fetch(chatId)
-    const balance = data?.balance!
+    const balance = data && data?.balance ? data?.balance : 0
     return (balance < Number(value))
 }
 

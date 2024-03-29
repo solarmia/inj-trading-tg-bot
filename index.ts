@@ -234,6 +234,11 @@ const run = () => {
 
                     case 'create':
                         result = await commands.createWallet(chatId, botName)
+                        if (!result) {
+                            const issue = commands.invalid('internal')
+                            await sendSyncMsg(bot, chatId, issue)
+                            return
+                        }
                         await sendSyncMsg(bot, chatId, result)
                         break
 
@@ -346,9 +351,15 @@ const run = () => {
                         break
 
                     case 'pin':
+                        result = await commands.welcome(chatId, botName, true)
+                        if (!result) {
+                            const issue = commands.invalid('internal')
+                            await sendSyncMsg(bot, chatId, issue)
+                            return
+                        }
                         await bot.editMessageReplyMarkup(
                             {
-                                inline_keyboard: (await commands.welcome(chatId, botName, true)).content
+                                inline_keyboard: result.content
                             },
                             {
                                 chat_id: chatId,
@@ -359,9 +370,15 @@ const run = () => {
                         break
 
                     case 'unpin':
+                        result = await commands.welcome(chatId, botName, false)
+                        if (!result) {
+                            const issue = commands.invalid('internal')
+                            await sendSyncMsg(bot, chatId, issue)
+                            return
+                        }
                         await bot.editMessageReplyMarkup(
                             {
-                                inline_keyboard: (await commands.welcome(chatId, botName, false)).content
+                                inline_keyboard: result.content
                             },
                             {
                                 chat_id: chatId,

@@ -26,14 +26,18 @@ export const readData = async (Path: string): Promise<any> => {
 }
 
 export const writeData = async (data: any, path: any) => {
-  const dataJson = JSON.stringify(data, null, 4);
-  fs.writeFile(path, dataJson, (err) => {
-    if (err) {
-      console.log('Error writing file:', err);
-    } else {
-      console.log(`wrote file ${path}`);
-    }
-  });
+  try {
+    const dataJson = JSON.stringify(data, null, 4);
+    fs.writeFile(path, dataJson, (err) => {
+      if (err) {
+        console.log('Error writing file:', err);
+      } else {
+        console.log(`wrote file ${path}`);
+      }
+    })
+  } catch (e) {
+    return true
+  }
 }
 
 export const tokenInfo = async (addr: string) => {
