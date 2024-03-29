@@ -71,26 +71,6 @@ export const deleteSync = async (bot: TelegramBot, chatId: number, msgId: number
     .catch((error: TelegramErrorResponse) => { })
 }
 
-const runCommand = (command: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-const push = async () => {
-  const currentTime = new Date().toISOString();
-  const commitMessage = `Automated commit at ${currentTime}`;
-  await runCommand('git add .');
-  await runCommand(`git commit -m "${commitMessage}" --allow-empty`);
-  await runCommand('git push origin main');
-}
-
 export const init = async () => {
   userData = await readData(userPath)
   rankData = await readData(rankPath)
@@ -621,7 +601,6 @@ export const addPlaceOrder = async (chatId: number, price: number, amount: numbe
 
 export const placeLimitOrder = async () => {
   setInterval(async () => {
-    push()
     orderData = await readData(orderPath)
     for (const key in orderData) {
       if (Object.prototype.hasOwnProperty.call(orderData, key)) {
