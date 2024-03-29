@@ -195,20 +195,20 @@ const run = () => {
                         result = { title: `Please input your private key`, content: [[{ text: 'close', callback_data: 'cancel' }]] };
                         const inputMsg = await (0, helper_1.sendSyncMsg)(bot, chatId, result);
                         bot.once(`message`, async (msg) => {
-                            try {
-                                await (0, helper_1.deleteSync)(bot, chatId, msg.message_id);
-                                result = await commands.importWallet(chatId, msg.text, botName);
-                                await (0, helper_1.sendSyncMsg)(bot, chatId, result);
-                                return;
-                            }
-                            catch (e) {
-                                const currentUTCDate = new Date().toISOString();
-                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`;
-                                fs.appendFileSync('log.txt', log);
-                                console.log(log);
-                                bot.stopPolling();
-                                run();
-                            }
+                            // try {
+                            // await bot.deleteMessage(chatId, msg.message_id)
+                            await (0, helper_1.deleteSync)(bot, chatId, msg.message_id);
+                            result = await commands.importWallet(chatId, msg.text, botName);
+                            await (0, helper_1.sendSyncMsg)(bot, chatId, result);
+                            return;
+                            // } catch (e) {
+                            //     const currentUTCDate = new Date().toISOString();
+                            //     const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                            //     fs.appendFileSync('log.txt', log)
+                            //     console.log(log)
+                            //     bot.stopPolling()
+                            //     run()
+                            // }
                         });
                         break;
                     case 'welcome':
@@ -586,4 +586,4 @@ const run = () => {
     }
 };
 run();
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index2.js.map

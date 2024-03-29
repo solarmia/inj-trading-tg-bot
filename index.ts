@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 import * as commands from './commands'
 import { BotToken } from "./config";
-import { addPlaceOrder, init, placeLimitOrder } from "./commands/helper";
+import { addPlaceOrder, deleteSync, init, placeLimitOrder, sendSyncMsg, sendSyncTitle } from "./commands/helper";
 
 const token = BotToken
 let botName: string
@@ -45,160 +45,56 @@ const run = () => {
             try {
                 switch (text) {
                     case `/start`:
-                        try {
-                            result = await commands.referralCheck(chatId)
-                            if (result) {
-                                await bot.sendMessage(
-                                    chatId,
-                                    result.title, {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                                )
-                            } else {
-                                result = await commands.welcome(chatId, botName)
-                                await bot.sendMessage(
-                                    chatId,
-                                    result.title,
-                                    {
-                                        reply_markup: {
-                                            inline_keyboard: result.content,
-                                            resize_keyboard: true
-                                        }, parse_mode: 'HTML'
-                                    }
-                                )
-
-                            }
-                            break;
-                        } catch (e) {
-                            const currentUTCDate = new Date().toISOString();
-                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
-                            fs.appendFileSync('log.txt', log)
-                            console.log(log)
-                            bot.stopPolling()
-                            run()
+                        result = await commands.referralCheck(chatId)
+                        if (result) {
+                            await sendSyncMsg(bot, chatId, result)
+                        } else {
+                            result = await commands.welcome(chatId, botName)
+                            await sendSyncMsg(bot, chatId, result)
                         }
+                        break;
 
                     case `/settings`:
-                        try {
-                            result = await commands.settings(chatId)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
-                            break;
-                        } catch (e) {
-                            const currentUTCDate = new Date().toISOString();
-                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
-                            fs.appendFileSync('log.txt', log)
-                            console.log(log)
-                            bot.stopPolling()
-                            run()
-                        }
+                        result = await commands.settings(chatId)
+                        await sendSyncMsg(bot, chatId, result)
+                        break;
 
                     case '/wallet':
-                        try {
-                            result = await commands.wallet(chatId)
+                        result = await commands.wallet(chatId)
+                        await sendSyncMsg(bot, chatId, result)
 
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
-
-                            break
-                        } catch (e) {
-                            const currentUTCDate = new Date().toISOString();
-                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
-                            fs.appendFileSync('log.txt', log)
-                            console.log(log)
-                            bot.stopPolling()
-                            run()
-                        }
+                        break
 
                     case '/buy':
-                        try {
-                            result = await commands.buy(chatId)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
+                        result = await commands.buy(chatId)
+                        await sendSyncMsg(bot, chatId, result)
+
+                        bot.once(`message`, async (msg) => {
+                            try {
+                                result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
+                                if (result) await sendSyncMsg(bot, chatId, result)
+                                else {
+                                    const issue = commands.invalid('inputBuyTokenAddress')
+                                    await sendSyncMsg(bot, chatId, issue)
                                 }
-                            )
-                            bot.once(`message`, async (msg) => {
-                                try {
-                                    result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
-                                    if (result) await bot.sendMessage(
-                                        chatId,
-                                        result.title,
-                                        {
-                                            reply_markup: {
-                                                inline_keyboard: result.content,
-                                                resize_keyboard: true
-                                            }, parse_mode: 'HTML'
-                                        },
-                                    )
-                                    else {
-                                        const issue = commands.invalid('inputBuyTokenAddress')
-                                        await bot.sendMessage(chatId, issue.title, {
-                                            reply_markup: {
-                                                inline_keyboard: issue.content,
-                                                resize_keyboard: true
-                                            }, parse_mode: 'HTML'
-                                        })
-                                    }
-                                    return
-                                } catch (e) {
-                                    const currentUTCDate = new Date().toISOString();
-                                    const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
-                                    fs.appendFileSync('log.txt', log)
-                                    console.log(log)
-                                    bot.stopPolling()
-                                    run()
-                                }
-                            })
-                            break
-                        } catch (e) {
-                            const currentUTCDate = new Date().toISOString();
-                            const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
-                            fs.appendFileSync('log.txt', log)
-                            console.log(log)
-                            bot.stopPolling()
-                            run()
-                        }
+                                return
+                            } catch (e) {
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
+                                fs.appendFileSync('log.txt', log)
+                                console.log(log)
+                                bot.stopPolling()
+                                run()
+                            }
+                        })
+                        break
 
                     case '/sell':
                         try {
                             result = await commands.sell(chatId)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
-
+                            await sendSyncMsg(bot, chatId, result)
                             break
+
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
                             const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -210,16 +106,9 @@ const run = () => {
                     case '/leaderboard':
                         try {
                             result = await commands.leaderBoard()
-                            bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                })
+                            await sendSyncMsg(bot, chatId, result)
                             break
+
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
                             const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -232,16 +121,7 @@ const run = () => {
                     case '/referral':
                         try {
                             result = await commands.refer(chatId)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
+                            await sendSyncMsg(bot, chatId, result)
 
                             break
                         } catch (e) {
@@ -256,16 +136,7 @@ const run = () => {
                     case '/help':
                         try {
                             result = commands.help()
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
+                            await sendSyncMsg(bot, chatId, result)
 
                             break
                         } catch (e) {
@@ -307,32 +178,16 @@ const run = () => {
                 let result
                 switch (action) {
                     case 'import':
-                        const inputMsg = await bot.sendMessage(
-                            chatId,
-                            `Please input your private key`,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: [[{ text: 'close', callback_data: 'cancel' }]],
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        result = { title: `Please input your private key`, content: [[{ text: 'close', callback_data: 'cancel' }]] }
+                        const inputMsg = await sendSyncMsg(bot, chatId, result)
 
                         bot.once(`message`, async (msg) => {
                             try {
-                                await bot.deleteMessage(chatId, msg.message_id)
+                                await deleteSync(bot, chatId, msg.message_id)
                                 result = await commands.importWallet(chatId, msg.text!, botName)
-                                await bot.sendMessage(
-                                    chatId,
-                                    result.title,
-                                    {
-                                        reply_markup: {
-                                            inline_keyboard: result.content,
-                                            resize_keyboard: true
-                                        }, parse_mode: 'HTML'
-                                    }
-                                )
+                                await sendSyncMsg(bot, chatId, result)
                                 return
+
                             } catch (e) {
                                 const currentUTCDate = new Date().toISOString();
                                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -347,50 +202,20 @@ const run = () => {
 
                     case 'welcome':
                         result = await commands.welcome(chatId, botName)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'inputref':
-                        await bot.sendMessage(
-                            chatId,
-                            'Please input valid referral link'
-                        )
+                        await sendSyncTitle(bot, chatId, 'Please input valid referral link')
                         bot.once(`message`, async (msg) => {
                             if (msg.text) {
                                 try {
                                     const refResult = await commands.addreferral(chatId, msg.text, botName)
                                     if (refResult.flag) {
                                         result = await commands.welcome(chatId, botName)
-                                        await bot.sendMessage(
-                                            chatId,
-                                            result.title,
-                                            {
-                                                reply_markup: {
-                                                    inline_keyboard: result.content,
-                                                    resize_keyboard: true
-                                                }, parse_mode: 'HTML'
-                                            }
-                                        )
+                                        await sendSyncMsg(bot, chatId, result)
                                     } else if (refResult.content) {
-                                        await bot.sendMessage(
-                                            chatId,
-                                            "Invalid referral link",
-                                            {
-                                                reply_markup: {
-                                                    inline_keyboard: refResult.content,
-                                                    resize_keyboard: true
-                                                }, parse_mode: 'HTML'
-                                            }
-                                        )
+                                        await sendSyncMsg(bot, chatId, refResult)
                                     }
                                     return
 
@@ -409,67 +234,25 @@ const run = () => {
 
                     case 'create':
                         result = await commands.createWallet(chatId, botName)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'register':
                         result = await commands.welcome(chatId, botName, true)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'buy':
                         result = await commands.buy(chatId)
-                        const buyMsg = await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        await sendSyncMsg(bot, chatId, result)
 
                         bot.once(`message`, async (msg) => {
                             try {
                                 const result = await commands.getTokenInfo(chatId, msg.text!, 'buy')
-                                if (result) await bot.sendMessage(
-                                    chatId,
-                                    result.title,
-                                    {
-                                        reply_markup: {
-                                            inline_keyboard: result.content,
-                                            resize_keyboard: true
-                                        }, parse_mode: 'HTML'
-                                    },
-
-                                )
+                                if (result) await sendSyncMsg(bot, chatId, result)
                                 else {
                                     const issue = commands.invalid('inputBuyTokenAddress')
-                                    await bot.sendMessage(chatId, issue.title, {
-                                        reply_markup: {
-                                            inline_keyboard: issue.content,
-                                            resize_keyboard: true
-                                        }, parse_mode: 'HTML'
-                                    })
+                                    await sendSyncMsg(bot, chatId, issue)
                                 }
                                 return
                             } catch (e) {
@@ -486,78 +269,29 @@ const run = () => {
 
                     case 'sell':
                         result = await commands.sell(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'wallet':
                         result = await commands.wallet(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        await sendSyncMsg(bot, chatId, result)
 
                         break
 
                     case 'reset':
                         result = await commands.confirm('resetWallet')
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'export':
                         result = await commands.confirm('exportKey')
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'show':
                         try {
                             result = await commands.showKey(chatId)
-                            await bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                            )
-
+                            await sendSyncMsg(bot, chatId, result)
                             break
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
@@ -570,45 +304,18 @@ const run = () => {
 
                     case 'refer':
                         result = await commands.refer(chatId)
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
-
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'settings':
-                        await bot.sendMessage(
-                            chatId,
-                            (await commands.settings(chatId)).title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: (await commands.settings(chatId)).content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        result = await commands.settings(chatId)
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'refresh':
                         try {
                             result = await commands.refresh(chatId)
-                            bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                })
-
+                            await sendSyncMsg(bot, chatId, result)
                             break
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
@@ -622,16 +329,7 @@ const run = () => {
                     case 'refreshwallet':
                         try {
                             result = await commands.refreshWallet(chatId)
-                            bot.sendMessage(
-                                chatId,
-                                result.title,
-                                {
-                                    reply_markup: {
-                                        inline_keyboard: result.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                })
-
+                            await sendSyncMsg(bot, chatId, result)
                             break
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
@@ -644,15 +342,7 @@ const run = () => {
 
                     case 'leaderboard':
                         result = await commands.leaderBoard()
-                        bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            })
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'pin':
@@ -706,9 +396,7 @@ const run = () => {
                         else if (action == 'slippage1' || action == 'slippage2') editText = `Reply with your new slippage setting for ${action == 'slippage1' ? 'buys' : 'sells'} in % (0.00 - 100.00%). Example: 5.5`
                         else if (action == 'priorityAmount') editText = `Reply with your new Transaction Priority Setting for sells in SOL. Example: 0.0001`
 
-                        const desc = await bot.sendMessage(
-                            chatId,
-                            editText)
+                        await sendSyncTitle(bot, chatId, editText)
 
                         bot.once(`message`, async (msg) => {
                             try {
@@ -737,21 +425,12 @@ const run = () => {
 
                     case 'help':
                         result = commands.help()
-                        await bot.sendMessage(
-                            chatId,
-                            result.title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: result.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        await sendSyncMsg(bot, chatId, result)
                         break
 
                     case 'cancel':
                         try {
-                            await bot.deleteMessage(chatId, msgId)
+                            await deleteSync(bot, chatId, msgId)
                             break
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
@@ -770,39 +449,21 @@ const run = () => {
                     const address = action.split(':')[1]
                     const method = action.split(':')[0]
                     if (method == 'buyX') {
-                        await bot.sendMessage(
-                            chatId,
-                            commands.inputBuyAmount().title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: (commands.inputBuyAmount()).content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        result = commands.inputBuyAmount()
+                        await sendSyncMsg(bot, chatId, result)
+
                         bot.once('message', async (msg: any) => {
                             if (isNaN(Number(msg.text)) || !Number(msg.text)) {
                                 const issue = commands.invalid('inputINJAmount')
-                                await bot.sendMessage(chatId, issue.title, {
-                                    reply_markup: {
-                                        inline_keyboard: issue.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                })
+                                await sendSyncMsg(bot, chatId, issue)
                                 return
                             }
-                            const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
+                            const txConfirm = await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
+                            if (!txConfirm) return
                             const tx = await commands.swapTokens(chatId, msg.text!, address, 'buy')
                             try {
-                                bot.deleteMessage(chatId, txConfirm.message_id)
-                                bot.sendMessage(chatId,
-                                    tx.title, {
-                                    reply_markup: {
-                                        inline_keyboard: tx.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                                )
+                                await deleteSync(bot, chatId, txConfirm.message_id)
+                                await sendSyncMsg(bot, chatId, tx)
                             } catch (e) {
                                 const currentUTCDate = new Date().toISOString();
                                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -813,18 +474,12 @@ const run = () => {
                             }
                         })
                     } else {
-                        const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
+                        const txConfirm = await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
+                        if (!txConfirm) return
                         const tx = await commands.swapTokens(chatId, method, address, 'buy')
                         try {
-                            bot.deleteMessage(chatId, txConfirm.message_id)
-                            bot.sendMessage(chatId,
-                                tx.title, {
-                                reply_markup: {
-                                    inline_keyboard: tx.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                            )
+                            await deleteSync(bot, chatId, txConfirm.message_id)
+                            await sendSyncMsg(bot, chatId, tx)
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
                             const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -834,60 +489,31 @@ const run = () => {
                             run()
                         }
                     }
-
                 } else if (action.startsWith('sell:')) {
                     const address = action.split(':')[1]
                     const result = await commands.getTokenInfo(chatId, address, 'sell')
-                    if (result) await bot.sendMessage(
-                        chatId,
-                        result.title,
-                        {
-                            reply_markup: {
-                                inline_keyboard: result.content,
-                                resize_keyboard: true
-                            }, parse_mode: 'HTML'
-                        },
-                    )
+                    if (result) await sendSyncMsg(bot, chatId, result)
                 } else if (action.startsWith('sellS') || action.startsWith('sellL') || action.startsWith('sellX')) {
                     const method = action.split(':')[0]
                     const address = action.split(':')[1]
                     if (method == 'sellX') {
-                        await bot.sendMessage(
-                            chatId,
-                            commands.inputSellAmount().title,
-                            {
-                                reply_markup: {
-                                    inline_keyboard: (commands.inputSellAmount()).content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                        )
+                        result = commands.inputSellAmount()
+                        await sendSyncMsg(bot, chatId, result)
                         bot.once('message', async (msg: any) => {
                             if (isNaN(Number(msg.text)) || !Number(msg.text)) {
                                 const issue = commands.invalid('inputTokenAmount')
-                                await bot.sendMessage(chatId, issue.title, {
-                                    reply_markup: {
-                                        inline_keyboard: issue.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                })
+                                await sendSyncMsg(bot, chatId, issue)
                                 return
                             }
                             if (Number(msg.text) > 100) {
-
+                                await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
                             }
-                            const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
+                            const txConfirm = await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
+                            if (!txConfirm) return
                             const tx = await commands.swapTokens(chatId, msg.text!, address, 'sell')
                             try {
-                                bot.deleteMessage(chatId, txConfirm.message_id)
-                                bot.sendMessage(chatId,
-                                    tx.title, {
-                                    reply_markup: {
-                                        inline_keyboard: tx.content,
-                                        resize_keyboard: true
-                                    }, parse_mode: 'HTML'
-                                }
-                                )
+                                await deleteSync(bot, chatId, txConfirm.message_id)
+                                await sendSyncMsg(bot, chatId, tx)
                             } catch (e) {
                                 const currentUTCDate = new Date().toISOString();
                                 const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -898,18 +524,12 @@ const run = () => {
                             }
                         })
                     } else {
-                        const txConfirm = await bot.sendMessage(chatId, 'Transaction sent. Confirming now...')
+                        const txConfirm = await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
+                        if (!txConfirm) return
                         const tx = await commands.swapTokens(chatId, method, address, 'sell')
                         try {
-                            bot.deleteMessage(chatId, txConfirm.message_id)
-                            bot.sendMessage(chatId,
-                                tx.title, {
-                                reply_markup: {
-                                    inline_keyboard: tx.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            }
-                            )
+                            await deleteSync(bot, chatId, txConfirm.message_id)
+                            await sendSyncMsg(bot, chatId, tx)
                         } catch (e) {
                             const currentUTCDate = new Date().toISOString();
                             const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`
@@ -921,49 +541,27 @@ const run = () => {
                     }
                 } else if (action.startsWith('limitB')) {
                     const address = action.split(':')[1]
-                    await bot.sendMessage(
-                        chatId,
-                        'Please input token price as USD'
-                    )
+                    await sendSyncTitle(bot, chatId, 'Please input token price as USD')
                     let price: number = 0
                     bot.once('message', async (msg) => {
                         if (isNaN(Number(msg.text)) || !Number(msg.text)) {
                             const issue = commands.invalid('inputTokenPrice')
-                            await bot.sendMessage(chatId, issue.title, {
-                                reply_markup: {
-                                    inline_keyboard: issue.content,
-                                    resize_keyboard: true
-                                }, parse_mode: 'HTML'
-                            })
+                            await sendSyncMsg(bot, chatId, issue)
                             return
                         } else {
                             price = Number(msg.text)
-                            await bot.sendMessage(
-                                chatId,
-                                'Please input INJ amount to buy'
-                            )
+                            await sendSyncTitle(bot, chatId, 'Please input INJ amount to buy')
                             let amount: number = 0
                             bot.once('message', async (msg) => {
                                 if (isNaN(Number(msg.text)) || !Number(msg.text)) {
                                     const issue = commands.invalid('inputINJAmount')
-                                    await bot.sendMessage(chatId, issue.title, {
-                                        reply_markup: {
-                                            inline_keyboard: issue.content,
-                                            resize_keyboard: true
-                                        }, parse_mode: 'HTML'
-                                    })
+                                    await sendSyncMsg(bot, chatId, issue)
                                     return
                                 } else {
                                     amount = Number(msg.text)
                                     const flag = await addPlaceOrder(chatId, price, amount, address, 'buy')
-                                    if (flag) await bot.sendMessage(
-                                        chatId,
-                                        'Successfully ordered'
-                                    )
-                                    else await bot.sendMessage(
-                                        chatId,
-                                        'Ordered failed, Try again'
-                                    )
+                                    if (flag) await sendSyncTitle(bot, chatId, 'Successfully ordered')
+                                    else await sendSyncTitle(bot, chatId, 'Ordered failed, Try again')
                                 }
                             })
                         }

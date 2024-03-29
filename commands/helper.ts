@@ -2,12 +2,13 @@ import { generateMnemonic } from "bip39";
 import { ChainGrpcBankApi, ExplorerCW20BalanceWithToken, IndexerGrpcAccountPortfolioApi, IndexerGrpcOracleApi, IndexerRestExplorerApi, MsgExecuteContract, MsgSend, Msgs, PrivateKey, toBase64 } from '@injectivelabs/sdk-ts'
 import { getNetworkEndpoints, Network } from '@injectivelabs/networks'
 import { encode, decode } from 'js-base64';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { exec } from 'child_process';
 
 import { userPath, settingsPath, fee, dexUrl, injAddr, treasury, rankPath, injExplorer, orderPath } from '../config';
 import { IContractData, IOrder, IPOrder, IRank, ISettings, Iuser, initialSetting, } from '../utils/type';
 import { getTokenDecimal, readData, swap, tokenInfo, writeData } from '../utils';
+import TelegramBot from "node-telegram-bot-api";
 
 let userData: Iuser = {}
 let settings: ISettings = {}
@@ -21,24 +22,53 @@ const indexerRestExplorerApi = new IndexerRestExplorerApi(
   `${endpoints.explorer}/api/explorer/v1`,
 )
 
-const runCommand = (command: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
+interface TelegramErrorResponse {
+  response: {
+    statusCode: number;
+  };
 }
 
-const push = async () => {
-  const currentTime = new Date().toISOString();
-  const commitMessage = `Automated commit at ${currentTime}`;
-  await runCommand('git add .');
-  await runCommand(`git commit -m "${commitMessage}" --allow-empty`);
-  await runCommand('git push origin main');
+export const sendSyncMsg = async (bot: TelegramBot, chatId: number, result: any) => {
+  bot.sendMessage(
+    chatId,
+    result.title, {
+    reply_markup: {
+      inline_keyboard: result.content,
+      resize_keyboard: true
+    }, parse_mode: 'HTML'
+  }
+  )
+    .then(msg => msg)
+    .catch((error: TelegramErrorResponse) => {
+      if (error.response && error.response.statusCode === 429) {
+        setTimeout(() => {
+          sendSyncMsg(bot, chatId, result);
+        }, 1000);
+      }
+      if (error.response && error.response.statusCode === 403) {
+        return
+      }
+    })
+}
+
+export const sendSyncTitle = async (bot: TelegramBot, chatId: number, title: any): Promise<TelegramBot.Message | void> => {
+  await bot.sendMessage(
+    chatId,
+    title
+  )
+    .then(msg => { return msg })
+    .catch((error: TelegramErrorResponse) => {
+      if (error.response && error.response.statusCode === 429) {
+        setTimeout(() => {
+          return sendSyncMsg(bot, chatId, title);
+        }, 1000);
+      }
+    })
+}
+
+export const deleteSync = async (bot: TelegramBot, chatId: number, msgId: number) => {
+  await bot.deleteMessage(chatId, msgId)
+    .catch((error: TelegramErrorResponse) => { })
 }
 
 export const init = async () => {
@@ -571,7 +601,6 @@ export const addPlaceOrder = async (chatId: number, price: number, amount: numbe
 
 export const placeLimitOrder = async () => {
   setInterval(async () => {
-    push()
     orderData = await readData(orderPath)
     for (const key in orderData) {
       if (Object.prototype.hasOwnProperty.call(orderData, key)) {

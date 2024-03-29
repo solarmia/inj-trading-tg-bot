@@ -3,13 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidPrivkey = exports.isValidAddress = exports.checkPossibleOrder = exports.placeLimitOrder = exports.addPlaceOrder = exports.getAllTokenList = exports.getTopTradersHelper = exports.swapTokenHelper = exports.getTokenInfoHelper = exports.setSettings = exports.getSetting = exports.checkValidAddr = exports.importWalletHelper = exports.createWalletHelper = exports.fetch = exports.validReferalLink = exports.checkInfo = exports.init = void 0;
+exports.isValidPrivkey = exports.isValidAddress = exports.checkPossibleOrder = exports.placeLimitOrder = exports.addPlaceOrder = exports.getAllTokenList = exports.getTopTradersHelper = exports.swapTokenHelper = exports.getTokenInfoHelper = exports.setSettings = exports.getSetting = exports.checkValidAddr = exports.importWalletHelper = exports.createWalletHelper = exports.fetch = exports.validReferalLink = exports.checkInfo = exports.init = exports.deleteSync = exports.sendSyncTitle = exports.sendSyncMsg = void 0;
 const bip39_1 = require("bip39");
 const sdk_ts_1 = require("@injectivelabs/sdk-ts");
 const networks_1 = require("@injectivelabs/networks");
 const js_base64_1 = require("js-base64");
 const axios_1 = __importDefault(require("axios"));
-const child_process_1 = require("child_process");
 const config_1 = require("../config");
 const type_1 = require("../utils/type");
 const utils_1 = require("../utils");
@@ -21,25 +20,43 @@ const endpoints = (0, networks_1.getNetworkEndpoints)(networks_1.Network.Mainnet
 const indexerGrpcAccountPortfolioApi = new sdk_ts_1.IndexerGrpcAccountPortfolioApi(endpoints.indexer);
 const chainGrpcBankApi = new sdk_ts_1.ChainGrpcBankApi(endpoints.grpc);
 const indexerRestExplorerApi = new sdk_ts_1.IndexerRestExplorerApi(`${endpoints.explorer}/api/explorer/v1`);
-const runCommand = (command) => {
-    return new Promise((resolve, reject) => {
-        (0, child_process_1.exec)(command, (error, stdout, stderr) => {
-            if (error) {
-                reject(error);
-            }
-            else {
-                resolve();
-            }
-        });
+const sendSyncMsg = async (bot, chatId, result) => {
+    bot.sendMessage(chatId, result.title, {
+        reply_markup: {
+            inline_keyboard: result.content,
+            resize_keyboard: true
+        }, parse_mode: 'HTML'
+    })
+        .then(msg => msg)
+        .catch((error) => {
+        if (error.response && error.response.statusCode === 429) {
+            setTimeout(() => {
+                (0, exports.sendSyncMsg)(bot, chatId, result);
+            }, 1000);
+        }
+        if (error.response && error.response.statusCode === 403) {
+            return;
+        }
     });
 };
-const push = async () => {
-    const currentTime = new Date().toISOString();
-    const commitMessage = `Automated commit at ${currentTime}`;
-    await runCommand('git add .');
-    await runCommand(`git commit -m "${commitMessage}" --allow-empty`);
-    await runCommand('git push origin main');
+exports.sendSyncMsg = sendSyncMsg;
+const sendSyncTitle = async (bot, chatId, title) => {
+    await bot.sendMessage(chatId, title)
+        .then(msg => { return msg; })
+        .catch((error) => {
+        if (error.response && error.response.statusCode === 429) {
+            setTimeout(() => {
+                return (0, exports.sendSyncMsg)(bot, chatId, title);
+            }, 1000);
+        }
+    });
 };
+exports.sendSyncTitle = sendSyncTitle;
+const deleteSync = async (bot, chatId, msgId) => {
+    await bot.deleteMessage(chatId, msgId)
+        .catch((error) => { });
+};
+exports.deleteSync = deleteSync;
 const init = async () => {
     userData = await (0, utils_1.readData)(config_1.userPath);
     rankData = await (0, utils_1.readData)(config_1.rankPath);
@@ -564,7 +581,6 @@ const addPlaceOrder = async (chatId, price, amount, address, type) => {
 exports.addPlaceOrder = addPlaceOrder;
 const placeLimitOrder = async () => {
     setInterval(async () => {
-        push();
         orderData = await (0, utils_1.readData)(config_1.orderPath);
         for (const key in orderData) {
             if (Object.prototype.hasOwnProperty.call(orderData, key)) {
