@@ -104,7 +104,8 @@ export const validReferalLink = async (link: string, botName: string, chatId: nu
       referees: [],
       referrer: decoded,
       buy: 0,
-      sell: 0
+      sell: 0,
+      sclx: 0
     }
     const result = await writeData(userData, userPath)
     if (result) return false
@@ -127,6 +128,7 @@ const getINJBalance = async (adderss: string) => {
 export const fetch = async (chatId: number, botName?: string) => {
   try {
     if (userData[chatId] && userData[chatId].publicKey) {
+      userData[chatId].sclx = (userData[chatId].buy + userData[chatId].sell) / Math.pow(10, 18) * 5
       const balance = await getINJBalance(userData[chatId].publicKey)
       userData[chatId].balance = balance
       const result = await writeData(userData, userPath)
@@ -137,7 +139,8 @@ export const fetch = async (chatId: number, botName?: string) => {
         referralLink: userData[chatId].referralLink,
         balance,
         referees: userData[chatId].referees,
-        referrer: userData[chatId].referrer
+        referrer: userData[chatId].referrer,
+        sclx: userData[chatId].sclx,
       }
     } else return undefined
   } catch (e) {
@@ -147,7 +150,8 @@ export const fetch = async (chatId: number, botName?: string) => {
       referralLink: userData[chatId].referralLink,
       balance: 0,
       referees: userData[chatId].referees,
-      referrer: userData[chatId].referrer
+      referrer: userData[chatId].referrer,
+      sclx: userData[chatId].sclx,
     }
   }
 }
@@ -166,7 +170,8 @@ export const createWalletHelper = async (chatId: number, botName: string) => {
     referees: [],
     referrer: '',
     buy: 0,
-    sell: 0
+    sell: 0,
+    sclx: 0
   }
   const result = await writeData(userData, userPath)
   if (result) return false
@@ -191,7 +196,8 @@ export const importWalletHelper = async (chatId: number, privateKeyHex: string, 
         referees: [],
         referrer: '',
         buy: 0,
-        sell: 0
+        sell: 0,
+        sclx: 0
       }
       writeData(userData, userPath)
       return {
@@ -210,7 +216,8 @@ export const importWalletHelper = async (chatId: number, privateKeyHex: string, 
         referees: [],
         referrer: '',
         buy: 0,
-        sell: 0
+        sell: 0,
+        sclx: 0
       }
       writeData(userData, userPath)
       return {

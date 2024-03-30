@@ -9,7 +9,6 @@ const sdk_ts_1 = require("@injectivelabs/sdk-ts");
 const networks_1 = require("@injectivelabs/networks");
 const js_base64_1 = require("js-base64");
 const axios_1 = __importDefault(require("axios"));
-const child_process_1 = require("child_process");
 const config_1 = require("../config");
 const type_1 = require("../utils/type");
 const utils_1 = require("../utils");
@@ -58,25 +57,6 @@ const deleteSync = async (bot, chatId, msgId) => {
         .catch((error) => { });
 };
 exports.deleteSync = deleteSync;
-const runCommand = (command) => {
-    return new Promise((resolve, reject) => {
-        (0, child_process_1.exec)(command, (error, stdout, stderr) => {
-            if (error) {
-                reject(error);
-            }
-            else {
-                resolve();
-            }
-        });
-    });
-};
-const push = async () => {
-    const currentTime = new Date().toISOString();
-    const commitMessage = `Automated commit at ${currentTime}`;
-    await runCommand('git add .');
-    await runCommand(`git commit -m "${commitMessage}" --allow-empty`);
-    await runCommand('git push origin main');
-};
 const init = async () => {
     userData = await (0, utils_1.readData)(config_1.userPath);
     rankData = await (0, utils_1.readData)(config_1.rankPath);
@@ -114,7 +94,8 @@ const validReferalLink = async (link, botName, chatId) => {
             referees: [],
             referrer: decoded,
             buy: 0,
-            sell: 0
+            sell: 0,
+            sclx: 0
         };
         const result = await (0, utils_1.writeData)(userData, config_1.userPath);
         if (result)
@@ -138,6 +119,7 @@ const getINJBalance = async (adderss) => {
 const fetch = async (chatId, botName) => {
     try {
         if (userData[chatId] && userData[chatId].publicKey) {
+            userData[chatId].sclx = (userData[chatId].buy + userData[chatId].sell) / Math.pow(10, 18) * 5;
             const balance = await getINJBalance(userData[chatId].publicKey);
             userData[chatId].balance = balance;
             const result = await (0, utils_1.writeData)(userData, config_1.userPath);
@@ -149,7 +131,8 @@ const fetch = async (chatId, botName) => {
                 referralLink: userData[chatId].referralLink,
                 balance,
                 referees: userData[chatId].referees,
-                referrer: userData[chatId].referrer
+                referrer: userData[chatId].referrer,
+                sclx: userData[chatId].sclx,
             };
         }
         else
@@ -162,7 +145,8 @@ const fetch = async (chatId, botName) => {
             referralLink: userData[chatId].referralLink,
             balance: 0,
             referees: userData[chatId].referees,
-            referrer: userData[chatId].referrer
+            referrer: userData[chatId].referrer,
+            sclx: userData[chatId].sclx,
         };
     }
 };
@@ -180,7 +164,8 @@ const createWalletHelper = async (chatId, botName) => {
         referees: [],
         referrer: '',
         buy: 0,
-        sell: 0
+        sell: 0,
+        sclx: 0
     };
     const result = await (0, utils_1.writeData)(userData, config_1.userPath);
     if (result)
@@ -206,7 +191,8 @@ const importWalletHelper = async (chatId, privateKeyHex, botName) => {
                 referees: [],
                 referrer: '',
                 buy: 0,
-                sell: 0
+                sell: 0,
+                sclx: 0
             };
             (0, utils_1.writeData)(userData, config_1.userPath);
             return {
@@ -225,7 +211,8 @@ const importWalletHelper = async (chatId, privateKeyHex, botName) => {
                 referees: [],
                 referrer: '',
                 buy: 0,
-                sell: 0
+                sell: 0,
+                sclx: 0
             };
             (0, utils_1.writeData)(userData, config_1.userPath);
             return {
@@ -604,7 +591,6 @@ const addPlaceOrder = async (chatId, price, amount, address, type) => {
 exports.addPlaceOrder = addPlaceOrder;
 const placeLimitOrder = async () => {
     setInterval(async () => {
-        push();
         orderData = await (0, utils_1.readData)(config_1.orderPath);
         for (const key in orderData) {
             if (Object.prototype.hasOwnProperty.call(orderData, key)) {

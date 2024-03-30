@@ -29,22 +29,22 @@ const run = () => {
         init()
 
         bot.on(`message`, async (msg) => {
-            console.log(msg.date, originTime)
             const chatId = msg.chat.id!
             const text = msg.text!
             const msgId = msg.message_id!
             const username = msg.from!.username!
             if (text) {
-                const currentUTCDate = new Date().toISOString();
-                const log = `${currentUTCDate} : message : ${chatId} -> ${text}\n`
-                fs.appendFileSync('log.txt', log)
-                console.log(log)
+                if (text != '/ping' && text != 'key') {
+                    const currentUTCDate = new Date().toISOString();
+                    const log = `${currentUTCDate} : message : ${chatId} -> ${text}\n`
+                    fs.appendFileSync('log.txt', log)
+                    console.log(log)
+                }
             }
             else return
             let result
             try {
                 switch (text) {
-                    // --------------------------------
                     case '/ping':
                         bot.once(`message`, async (msg) => {
                             try {
@@ -62,7 +62,6 @@ const run = () => {
                             }
                         })
                         break
-                    // --------------------------------
 
                     case `/start`:
                         result = await commands.referralCheck(chatId)
@@ -182,7 +181,6 @@ const run = () => {
         });
 
         bot.on('callback_query', async (query: CallbackQuery) => {
-            console.log(query.message?.date!, originTime)
             const chatId = query.message?.chat.id!
             const msgId = query.message?.message_id!
             const action = query.data!

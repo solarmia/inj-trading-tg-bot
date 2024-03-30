@@ -64,8 +64,7 @@ export const welcome = async (chatId: number, botName?: string, pin: boolean = f
     if (await checkInfo(chatId)) {
         const data = await fetch(chatId, botName)
         if (!data) return undefined
-        const publicKey = data?.publicKey
-        const balance = data?.balance
+        const { publicKey, balance } = data
 
         const title = `Welcome to Scale Bot
         
@@ -130,15 +129,15 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 export const refresh = async (chatId: number) => {
     const data = await fetch(chatId)
     if (data) {
-        const publicKey = data?.publicKey
-        const balance = data?.balance
+        const { publicKey, balance, sclx } = data
 
         const title = `Successfully refreshed!
-    
+        
 To get started with trading, send some INJ to your Scale Bot wallet address:
 <code>${publicKey}</code>
 
 INJ balance: ${balance} INJ
+SCLX amount: ${sclx} SCLX
 
 Once done tap refresh and your balance will appear here.
 
@@ -156,14 +155,15 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 export const refreshWallet = async (chatId: number) => {
     const data = await fetch(chatId)
     if (data) {
-        const publicKey = data?.publicKey
-        const balance = data?.balance
+        const { publicKey, balance, sclx } = data
+
         const title = `Successfully refreshed!
     
 Your Scale Bot wallet address:
 <code>${publicKey}</code>
 
 INJ balance: ${balance} INJ
+SCLX amount: ${sclx} SCLX
 
 Tap to copy the address and send INJ to deposit.`
 
@@ -292,11 +292,12 @@ export const sell = async (chatId: number) => {
 export const wallet = async (chatId: number) => {
     const data = await fetch(chatId)
     if (data) {
-        const { publicKey, balance } = data
+        const { publicKey, balance, sclx } = data
         const title = `Your Wallet:
     
 Your Scale Bot wallet address: <code>${publicKey}</code>
 INJ Balance: ${balance} INJ
+SCLX amount: ${sclx} SCLX
 
 Tap to copy the address and send INJ to deposit.`
 
@@ -326,7 +327,7 @@ export const confirm = async (status: string) => {
 export const showKey = async (chatId: number) => {
     const data = await fetch(chatId)
     if (data) {
-        const privateKey = data?.privateKey
+        const { privateKey } = data
         const title = `Your Private Key is:
 
 <code>${privateKey}</code>
@@ -346,9 +347,8 @@ Delete this message once you are done.`
 export const refer = async (chatId: number) => {
     const data = await fetch(chatId)
     if (data) {
-        const referralLink = data?.referralLink
-        const referees = data?.referees!
-        const referrer = data?.referrer
+        const { referralLink, referees, referrer } = data
+
         const title = `Referral Link: 
 <code>${referralLink}</code>
 

