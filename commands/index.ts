@@ -486,6 +486,7 @@ To sell press one of the buttons below.`
 }
 
 export const swapTokens = async (chatId: number, value: string, address: string, type: string) => {
+    console.log('swapped')
     const result = await swapTokenHelper(chatId, value, address, type)
     if (result && result?.success) {
         const title = `Transaction Sucesss `

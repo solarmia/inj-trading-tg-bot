@@ -399,3 +399,122 @@ Bot startedBot started2024-03-28T09:46:41.080Z : Bot started2024-03-28T09:47:00.
 2024-03-30T16:40:03.590Z : message : 6381452440 -> cancel
 2024-03-30T16:40:59.513Z : message : 6381452440 -> /leaderboard
 2024-03-30T16:41:01.591Z : message : 6381452440 -> /wallet
+2024-03-31T16:50:43.089Z : Bot started
+2024-03-31T16:50:44.371Z : message : 6381452440 -> /buy
+2024-03-31T16:50:55.429Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T16:51:33.969Z : message : 6381452440 -> /buy
+2024-03-31T16:51:41.263Z : message : 6381452440 -> inj1l49685vnk88zfw2egf6v65se7trw2497wsqk65
+2024-03-31T16:56:11.551Z : Bot started
+2024-03-31T16:56:12.731Z : message : 6381452440 -> /buy
+2024-03-31T17:09:59.621Z : Bot started
+2024-03-31T17:10:25.657Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:10:33.599Z : message : 6381452440 -> /buy
+2024-03-31T17:10:35.895Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:11:31.989Z : Bot started
+2024-03-31T17:11:33.128Z : message : 6381452440 -> /buy
+2024-03-31T17:11:36.058Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:12:20.566Z : Bot started
+2024-03-31T17:12:26.367Z : message : 6381452440 -> /buy
+2024-03-31T17:12:28.347Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:13:55.320Z : Bot started
+2024-03-31T17:14:15.447Z : message : 6381452440 -> /buy
+2024-03-31T17:14:19.701Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:17:48.802Z : Bot started
+2024-03-31T17:17:50.686Z : message : 6381452440 -> /buy
+2024-03-31T17:17:54.917Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:19:03.784Z : Bot started
+2024-03-31T17:19:04.937Z : message : 6381452440 -> /buy
+2024-03-31T17:19:07.763Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:19:30.065Z : Bot started
+2024-03-31T17:20:18.541Z : Bot started
+2024-03-31T17:20:19.657Z : message : 6381452440 -> /buy
+2024-03-31T17:20:22.074Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:21:30.118Z : message : 6381452440 -> /buy
+2024-03-31T17:21:41.871Z : Bot started
+2024-03-31T17:21:44.959Z : message : 6381452440 -> /buy
+2024-03-31T17:21:49.635Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:23:52.959Z : Bot started
+2024-03-31T17:23:54.126Z : message : 6381452440 -> /buy
+2024-03-31T17:24:01.791Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:25:44.731Z : message : 6381452440 -> /wallet
+2024-03-31T17:25:47.349Z : message : 6381452440 -> reset
+2024-03-31T17:25:48.849Z : message : 6381452440 -> import
+2024-03-31T17:25:50.964Z : message : 6381452440 -> 0x9a9044a0f632ddff421d775db93bd13eac31bb87313efb2b687abf198c9deae6
+2024-03-31T17:26:07.617Z : message : 6381452440 -> buy
+2024-03-31T17:26:10.049Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:26:12.520Z : message : 6381452440 -> buyX:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:26:20.466Z : message : 6381452440 -> cancel
+2024-03-31T17:27:23.591Z : Bot started
+2024-03-31T17:27:29.728Z : message : 6381452440 -> /buy
+2024-03-31T17:27:32.311Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:27:35.043Z : message : 6381452440 -> buyX:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:27:39.313Z : message : 6381452440 -> 0.001
+2024-03-31T17:31:45.416Z : Bot started
+2024-03-31T17:31:46.568Z : message : 6381452440 -> /settings
+2024-03-31T17:31:50.880Z : message : 6381452440 -> buy1
+2024-03-31T17:31:55.860Z : message : 6381452440 -> 0.001
+2024-03-31T17:31:59.520Z : message : 6381452440 -> /buy
+2024-03-31T17:32:07.884Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:32:38.466Z : message : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:33:25.733Z : Bot started
+2024-03-31T17:34:16.959Z : message : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:34:36.029Z : Bot started
+2024-03-31T17:35:04.892Z : Bot started
+2024-03-31T17:35:12.759Z : Bot started
+2024-03-31T17:35:28.747Z : message : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:37:10.590Z : Bot started
+2024-03-31T17:37:14.648Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:38:07.058Z : Bot started
+2024-03-31T17:38:14.512Z : message : 6381452440 -> /buy
+2024-03-31T17:38:18.438Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:38:22.835Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:38:41.313Z : Bot started
+2024-03-31T17:38:43.359Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:40:37.717Z : Bot started
+2024-03-31T17:40:39.055Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:41:00.005Z : Bot started
+2024-03-31T17:41:01.770Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:41:28.713Z : Bot started
+2024-03-31T17:41:29.813Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:42:06.156Z : Bot started
+2024-03-31T17:42:07.309Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:42:55.418Z : Bot started
+2024-03-31T17:43:05.126Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:44:28.884Z : Bot started
+2024-03-31T17:45:13.119Z : Bot started
+2024-03-31T17:45:33.852Z : Bot started
+2024-03-31T17:45:50.318Z : Bot started
+2024-03-31T17:45:52.075Z : message : 6381452440 -> /buy
+2024-03-31T17:45:54.637Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T17:45:58.738Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T17:47:16.054Z : Bot started
+2024-03-31T17:47:17.391Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T18:00:45.706Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T18:01:02.479Z : Bot started
+2024-03-31T18:03:37.662Z : Bot started
+2024-03-31T18:04:12.729Z : Bot started
+2024-03-31T18:04:13.967Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T18:05:40.894Z : Bot started
+2024-03-31T18:06:38.205Z : Bot started
+2024-03-31T18:07:14.102Z : Bot started
+2024-03-31T18:08:02.928Z : query : 6381452440 -> buyS:inj1eswdzx773we5zu2mz0zcmm7l5msr8wcss8ek0f
+2024-03-31T18:09:13.629Z : message : 6381452440 -> /buy
+2024-03-31T18:09:16.852Z : message : 6381452440 -> inj15579l82y9yt8cgnrw3pqc8ur26j55jpdmwde5k
+2024-03-31T18:09:57.955Z : message : 6381452440 -> /buy
+2024-03-31T18:09:59.386Z : message : 6381452440 -> factory/inj1mly2ykhf6f9tdj58pvndjf4q8dzdl4myjqm9t6/ALIEN
+2024-03-31T18:10:14.986Z : message : 6381452440 -> /buy
+2024-03-31T18:10:16.517Z : message : 6381452440 -> factory/inj1xy3kvlr4q4wdd6lrelsrw2fk2ged0any44hhwq/KIRA
+2024-03-31T18:10:27.611Z : message : 6381452440 -> /buy
+2024-03-31T18:11:03.620Z : message : 6381452440 -> factory/inj1mly2ykhf6f9tdj58pvndjf4q8dzdl4myjqm9t6/ALIEN
+2024-03-31T18:14:22.068Z : Bot started
+2024-03-31T18:14:47.345Z : Bot started
+2024-03-31T18:15:08.074Z : message : 6381452440 -> /buy
+2024-03-31T18:15:11.568Z : message : 6381452440 -> factory/inj1mly2ykhf6f9tdj58pvndjf4q8dzdl4myjqm9t6/ALIEN
+2024-03-31T18:15:57.259Z : Bot started
+2024-03-31T18:16:06.991Z : message : 6381452440 -> /buy
+2024-03-31T18:16:10.245Z : message : 6381452440 -> factory/inj1mly2ykhf6f9tdj58pvndjf4q8dzdl4myjqm9t6/ALIEN
+2024-03-31T18:18:00.849Z : Bot started
+2024-03-31T18:18:08.507Z : Bot started
+2024-03-31T18:20:10.380Z : Bot started
+2024-03-31T18:21:46.134Z : Bot started
+2024-03-31T18:23:29.381Z : Bot started

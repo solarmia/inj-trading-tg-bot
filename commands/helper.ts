@@ -22,14 +22,14 @@ const indexerRestExplorerApi = new IndexerRestExplorerApi(
   `${endpoints.explorer}/api/explorer/v1`,
 )
 
-interface TelegramErrorResponse {
+type TelegramErrorResponse = {
   response: {
     statusCode: number;
   };
 }
 
 export const sendSyncMsg = async (bot: TelegramBot, chatId: number, result: any) => {
-  bot.sendMessage(
+  await bot.sendMessage(
     chatId,
     result.title, {
     reply_markup: {
@@ -41,8 +41,8 @@ export const sendSyncMsg = async (bot: TelegramBot, chatId: number, result: any)
     .then(msg => msg)
     .catch((error: TelegramErrorResponse) => {
       if (error.response && error.response.statusCode === 429) {
-        setTimeout(() => {
-          sendSyncMsg(bot, chatId, result);
+        setTimeout(async () => {
+          await sendSyncMsg(bot, chatId, result);
         }, 1000);
       }
       if (error.response && error.response.statusCode === 403) {
@@ -51,19 +51,34 @@ export const sendSyncMsg = async (bot: TelegramBot, chatId: number, result: any)
     })
 }
 
-export const sendSyncTitle = async (bot: TelegramBot, chatId: number, title: any): Promise<TelegramBot.Message | void> => {
-  await bot.sendMessage(
-    chatId,
-    title
-  )
-    .then(msg => { return msg })
-    .catch((error: TelegramErrorResponse) => {
-      if (error.response && error.response.statusCode === 429) {
-        setTimeout(() => {
-          return sendSyncMsg(bot, chatId, title);
-        }, 1000);
-      }
-    })
+// export const sendSyncTitle = async (bot: TelegramBot, chatId: number, title: any)=> {
+//   await bot.sendMessage(
+//     chatId,
+//     title
+//   )
+//     .then(msg => {
+//       console.log('----',msg)
+//       return msg
+//     })
+//     .catch((error: TelegramErrorResponse) => {
+//       if (error.response && error.response.statusCode === 429) {
+//         setTimeout(async () => {
+//           return await sendSyncMsg(bot, chatId, title);
+//         }, 1000);
+//       }
+//     })
+// }
+
+export const sendSyncTitle = async (bot: TelegramBot, chatId: number, title: any) => {
+  while (true) {
+    try {
+      const msg = await bot.sendMessage(chatId, title);
+      return msg;
+    } catch (error) {
+      setTimeout(async () => {
+      }, 1000)
+    }
+  }
 }
 
 export const deleteSync = async (bot: TelegramBot, chatId: number, msgId: number) => {
@@ -290,13 +305,16 @@ export const setSettings = async (chatId: number, category: string, value?: any)
   return settings[chatId]
 }
 
-export const getTokenInfoHelper = async (address: string, chatId: number) => {
+export const getTokenInfoHelper = async (addr: string, chatId: number) => {
+  const address = addr.replace(/\//g, '-')
   const dex = (await axios.get(`${dexUrl}/${address}`)).data
   if (!('pairs' in dex)) return undefined
   const pairs = dex.pairs
+  const middleToken = []
   if (pairs && pairs.length) {
     for (let i = 0; i < pairs.length; i++) {
       if (pairs[i].chainId == 'injective' && pairs[i].dexId == 'dojoswap' && ((pairs[i].baseToken.address == injAddr && pairs[i].quoteToken.address == address) || (pairs[i].quoteToken.address == injAddr && pairs[i].baseToken.address == address))) {
+        middleToken.push(pairs[i].baseToken.address == address ? pairs[i].quoteToken.address : pairs[i].baseToken.address)
         const tokenInfo = pairs[i].baseToken.address == address ? pairs[i].baseToken : pairs[i].quoteToken
         const price = pairs[i].priceUsd
         const priceChange = pairs[i].priceChange
@@ -312,6 +330,7 @@ export const getTokenInfoHelper = async (address: string, chatId: number) => {
 }
 
 export const swapTokenHelper = async (chatId: number, value: string, tokenAddr: string, type: string) => {
+  console.log('swapTokenHelper')
   settings = await readData(settingsPath)
   userData = await readData(userPath)
   const setInfo = settings[chatId]
@@ -323,7 +342,7 @@ export const swapTokenHelper = async (chatId: number, value: string, tokenAddr: 
   const injectiveAddress = privateKey.toBech32();
   const signer = privateKey.toAddress();
   const pubKey = privateKey.toPublicKey().toBase64();
-
+  console.log('swap')
   if (type == 'buy') {
     switch (value) {
       case 'buyS':
@@ -432,6 +451,7 @@ export const swapTokenHelper = async (chatId: number, value: string, tokenAddr: 
       };
       const swapMsg = MsgExecuteContract.fromJSON(swapJSONMsg)
       await swap(privateKey, injectiveAddress, pubKey, feeMsg)
+      console.log(feeMsg, swapMsg)
       result = await swap(privateKey, injectiveAddress, pubKey, swapMsg)
     }
 
@@ -784,7 +804,7 @@ const getInjPriceFiat = async () => {
 
 export const isValidAddress = (address: string): boolean => {
   // Define the regular expression pattern for the address
-  const regexPattern = /^inj[a-z0-9]{39}$/;
+  const regexPattern = /inj[a-z0-9]{39}/;
 
   // Test the address against the pattern
   return regexPattern.test(address);

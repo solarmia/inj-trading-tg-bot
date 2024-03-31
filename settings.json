@@ -56,7 +56,7 @@
     },
     "6381452440": {
         "announcement": false,
-        "buy1": 1,
+        "buy1": "0.001",
         "buy2": 2,
         "sell1": 20,
         "sell2": 80,

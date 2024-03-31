@@ -45,6 +45,7 @@ const run = () => {
             let result
             try {
                 switch (text) {
+                    // ------------------------------------------------
                     case '/ping':
                         bot.once(`message`, async (msg) => {
                             try {
@@ -62,6 +63,7 @@ const run = () => {
                             }
                         })
                         break
+                    // ------------------------------------------------
 
                     case `/start`:
                         result = await commands.referralCheck(chatId)
@@ -188,7 +190,7 @@ const run = () => {
             const callbackQueryId = query.id;
 
             const currentUTCDate = new Date().toISOString();
-            const log = `${currentUTCDate} : message : ${chatId} -> ${action}\n`
+            const log = `${currentUTCDate} : query : ${chatId} -> ${action}\n`
             fs.appendFileSync('log.txt', log)
             console.log(log)
 
@@ -541,7 +543,9 @@ const run = () => {
                                 return
                             }
                             if (Number(msg.text) > 100) {
-                                await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
+                                const issue = commands.invalid('inputTokenAmount')
+                                await sendSyncMsg(bot, chatId, issue)
+                                return
                             }
                             const txConfirm = await sendSyncTitle(bot, chatId, 'Transaction sent. Confirming now...')
                             if (!txConfirm) return
