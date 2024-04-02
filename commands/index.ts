@@ -486,7 +486,6 @@ To sell press one of the buttons below.`
 }
 
 export const swapTokens = async (chatId: number, value: string, address: string, type: string) => {
-    console.log('swapped')
     const result = await swapTokenHelper(chatId, value, address, type)
     if (result && result?.success) {
         const title = `Transaction Sucesss `
@@ -513,39 +512,32 @@ export const invalid = (type: string) => {
 
 export const help = () => {
     const title = `Which tokens can I trade?
-
-Any CW20 token that is a INJ pair on Dojoswap . We pick up pairs instantly, and swap token in 1 only min.
+With Scale Bot you can trade any CW20 token that is an INJ pair on DojoSwap. We pick up pairs instantly and swap the token in only 1 minute.
 
 How can I see how much money I've made from referrals?
-
-Check the referrals button or type /referral to see your payment in Scale world !
+Check the referrals button or type /referrals to see your payment in Scale World!
 
 How can I create a new wallet on Scale Bot?
-
-Click the Wallet button or type /wallet, and you will be able to configure your new wallets
+Click the Wallet button or type /wallet, and you will be able to configure your new wallet.
 
 Can I import my previously created Injective wallet?
+Yes, you can import your any Injective wallet you have previously created.
 
-Yes, you can import your any Injective wallet which you have created previously.
+Is Scale Bot free? How much do I pay for transactions?
+Scale Bot is absolutely free! It will always be free. We only charge 1% on transactions, and we will continue to keep the bot free so everyone can use it.
 
-Is Scale Bot free? How much do i pay for transactions?
+How does Scale Bot guarantee transaction success rates?
+Scale Bot provides the best service for transactions while also providing the option to increase fees for transactions. To adjust the fee amount, simply click the settings button or type /settings.
 
-Scale Bot is absolutely free! will be always. We charge only 1% on transactions, and keep the bot free so that everyone can use it.
+Why are my profits lower than expected?
+Your net profit is calculated after deducting all associated costs, including Price Impact, Transfer Tax, DEX Fees, and a 1% Scale Bot fee. This ensures the figure you see is what you actually receive, accounting for all transaction-related expenses.
 
-How does Scale Bot gurantee transaction success rate?
-
-Scale Bot provides best service for transaction.
-You can set this amount in settings button or /settings.
-
-Why is  Profit Lower Than Expectation?
-Your Net Profit is calculated after deducting all associated costs, including Price Impact, Transfer Tax, Dex Fees, and a 1% Scale Bot fee. This ensures the figure you see is what you actually receive, accounting for all transaction-related expenses.
-
-Is there a difference between <a href="https://t.me/scaleXFibot">@Scale Bot</a> and other bots?
-Yes, Scale bot is way faster than any other trading bots built on Injective ecosystem and comes with lots of new features like:
-- Refer to earn
-- Weekly leaderboard
-- Rewards for top traders
-- Wallet import`
+Is there a difference between Scale Bot and other bots?
+Yes, Scale Bot is much faster than any other trading bots built on Injective ecosystem, and Scale Bot comes with several new features like:
+- Refer to Earn
+- Weekly Leaderboard
+- Rewards for Top Traders
+- Wallet Import`
 
     const content = [[{ text: 'close', callback_data: 'cancel' }]]
     return { title, content }

@@ -330,7 +330,6 @@ export const getTokenInfoHelper = async (addr: string, chatId: number) => {
 }
 
 export const swapTokenHelper = async (chatId: number, value: string, tokenAddr: string, type: string) => {
-  console.log('swapTokenHelper')
   settings = await readData(settingsPath)
   userData = await readData(userPath)
   const setInfo = settings[chatId]
@@ -451,7 +450,6 @@ export const swapTokenHelper = async (chatId: number, value: string, tokenAddr: 
       };
       const swapMsg = MsgExecuteContract.fromJSON(swapJSONMsg)
       await swap(privateKey, injectiveAddress, pubKey, feeMsg)
-      console.log(feeMsg, swapMsg)
       result = await swap(privateKey, injectiveAddress, pubKey, swapMsg)
     }
 
@@ -651,7 +649,7 @@ export const placeLimitOrder = async () => {
         }
       }
     }
-  }, 60000)
+  }, 600000)
 }
 
 const orderBuy = async (data: IPOrder, chatId: string, tokenAddr: string) => {
