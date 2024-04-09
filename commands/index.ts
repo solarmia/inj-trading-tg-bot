@@ -14,13 +14,13 @@ const confirmList: IConfirm =
     exportKey: {
         title: "Are you sure you want to export your Private Key?",
         content: [
-            [{ text: `Confirm`, callback_data: `show` }, { text: `Cancel`, callback_data: `cancel` }]
+            [{ text: `Confirm`, callback_data: `show` }, { text: `❌ Cancel`, callback_data: `cancel` }]
         ]
     },
     resetWallet: {
         title: "Are you sure you want to reset your wallet?",
         content: [
-            [{ text: `Import you own Wallet`, callback_data: `import` }, { text: `Create new Wallet`, callback_data: `create` }], [{ text: `Cancel`, callback_data: `cancel` }]
+            [{ text: `Import you own Wallet`, callback_data: `import` }, { text: `Create new Wallet`, callback_data: `create` }], [{ text: `❌ Cancel`, callback_data: `cancel` }]
         ]
     },
 }
@@ -37,17 +37,17 @@ export const commandList = [
 ];
 
 const mainContent = (pin: boolean = false) => [
-    [{ text: `Buy`, callback_data: 'buy' }, { text: `Sell`, callback_data: 'sell' }],
-    [{ text: `Wallet`, callback_data: 'wallet' }, { text: `Settings`, callback_data: 'settings' }],
-    [{ text: `Refer Friend`, callback_data: 'refer' }, { text: `Help`, callback_data: 'help' }],
-    [{ text: `Refresh`, callback_data: 'refresh' }, { text: `Leader Board`, callback_data: 'leaderboard' }],
-    [{ text: `${pin ? 'Unpin' : 'Pin'}`, callback_data: `${pin ? 'unpin' : 'pin'}` }],
+    [{ text: `💸 Buy`, callback_data: 'buy' }, { text: `🛒 Sell`, callback_data: 'sell' }],
+    [{ text: `👜 Wallet`, callback_data: 'wallet' }, { text: `⚙️ Settings`, callback_data: 'settings' }],
+    [{ text: `🥰 Refer Friend`, callback_data: 'refer' }, { text: `❓ Help`, callback_data: 'help' }],
+    [{ text: `🔃 Refresh`, callback_data: 'refresh' }, { text: `🧾 Leader Board`, callback_data: 'leaderboard' }],
+    [{ text: `${pin ? '📍 Unpin' : '📌 Pin'}`, callback_data: `${pin ? 'unpin' : 'pin'}` }],
 ]
 
 export const referralCheck = async (chatId: number) => {
     if (!(await checkInfo(chatId))) {
         const title = 'Did you receive a referral link?'
-        const content = [[{ text: 'Yes', callback_data: "inputref" }, { text: 'No', callback_data: "welcome" }]]
+        const content = [[{ text: '✔️ Yes', callback_data: "inputref" }, { text: '❌ No', callback_data: "welcome" }]]
         return { title, content }
     }
     return undefined
@@ -56,7 +56,7 @@ export const referralCheck = async (chatId: number) => {
 export const addreferral = async (chatId: number, referralLink: string, botName: string) => {
     const validation = await validReferalLink(referralLink, botName, chatId)
     if (validation) return { data: 'Successfully added referral link', flag: true }
-    return { data: 'Invalid referral link', content: [[{ text: 'Try again', callback_data: 'inputref' }, { text: 'Cancel', callback_data: 'cancel' }]], flag: false }
+    return { data: '❌ Invalid referral link', content: [[{ text: '🔁 Try again', callback_data: 'inputref' }, { text: '❌ Cancel', callback_data: 'cancel' }]], flag: false }
 }
 
 export const welcome = async (chatId: number, botName?: string, pin: boolean = false) => {
@@ -91,7 +91,7 @@ For more info on your wallet and to retrieve your private key, tap the wallet bu
 Are you going to create new wallet or import your own wallet?`
 
         const content = [
-            [{ text: `Import`, callback_data: 'import' }, { text: `Create`, callback_data: 'create' }],
+            [{ text: `📩 Import`, callback_data: 'import' }, { text: `🆕 Create`, callback_data: 'create' }],
         ]
 
         return {
@@ -168,10 +168,10 @@ SCLX amount: ${sclx} SCLX
 Tap to copy the address and send INJ to deposit.`
 
         const content = [
-            [{ text: `View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `Refresh`, callback_data: `refresh` }],
+            [{ text: `🔎 View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `🔃 Refresh`, callback_data: `refresh` }],
             // [{ text: `Withdraw all INJ`, callback_data: `withdraw` }, { text: `Withdraw X INJ`, callback_data: `withdrawX` }],
-            [{ text: `Export Private Key`, callback_data: `export` }, { text: `Reset wallet`, callback_data: `reset` }],
-            [{ text: `Close`, callback_data: `cancel` }]
+            [{ text: `🔑 Export Private Key`, callback_data: `export` }, { text: `♻️ Reset wallet`, callback_data: `reset` }],
+            [{ text: `🚫 Close`, callback_data: `cancel` }]
         ]
 
         return {
@@ -215,7 +215,7 @@ Input cw20 token address to buy.
 ex: inj123456789abc...`
 
         const content = [
-            [{ text: `Cancel`, callback_data: 'cancel' }]
+            [{ text: `❌ Cancel`, callback_data: 'cancel' }]
         ]
 
         return {
@@ -227,7 +227,7 @@ ex: inj123456789abc...`
 const register = () => {
     const title = `Please register your wallet first. Please click button to register.`
     const content = [
-        [{ text: `Register`, callback_data: 'register' }]
+        [{ text: `✍ Register`, callback_data: 'register' }]
     ]
     return {
         title, content
@@ -240,7 +240,7 @@ export const inputBuyAmount = () => {
 Input INJ amount to buy tokens in the scope of your balance.`
 
     const content = [
-        [{ text: `Cancel`, callback_data: 'cancel' }]
+        [{ text: `❌ Cancel`, callback_data: 'cancel' }]
     ]
 
     return {
@@ -254,7 +254,7 @@ export const inputSellAmount = () => {
 Input token percentage to sell tokens.(1 ~ 100%)`
 
     const content = [
-        [{ text: `Cancel`, callback_data: 'cancel' }]
+        [{ text: `❌ Cancel`, callback_data: 'cancel' }]
     ]
 
     return {
@@ -275,13 +275,13 @@ export const sell = async (chatId: number) => {
             ownTokens.map((val: any) => {
                 content.push([{ text: `Token: ${val.token.symbol}   Balance: ${val.balance / Math.pow(10, val.token.decimals)}`, callback_data: `sell:${val.contractAddress}` }])
             })
-            content.push([{ text: `Close`, callback_data: `cancel` }])
+            content.push([{ text: `🚫 Close`, callback_data: `cancel` }])
             return {
                 title, content
             }
         } else {
             const title = `You have no tokens in your wallet.`
-            const content = [[{ text: `Close`, callback_data: `cancel` }]]
+            const content = [[{ text: `🚫 Close`, callback_data: `cancel` }]]
             return {
                 title, content
             }
@@ -302,10 +302,10 @@ SCLX amount: ${sclx} SCLX
 Tap to copy the address and send INJ to deposit.`
 
         const content = [
-            [{ text: `View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `Refresh`, callback_data: `refreshwallet` }],
+            [{ text: `🔎 View on explorer`, url: `https://explorer.injective.network/account/${publicKey}` }, { text: `🔃 Refresh`, callback_data: `refreshwallet` }],
             // [{ text: `Withdraw all INJ`, callback_data: `withdraw` }, { text: `Withdraw X INJ`, callback_data: `withdrawX` }],
-            [{ text: `Export Private Key`, callback_data: `export` }, { text: `Reset wallet`, callback_data: `reset` }],
-            [{ text: `Close`, callback_data: `cancel` }]
+            [{ text: `🔑 Export Private Key`, callback_data: `export` }, { text: `♻️ Reset wallet`, callback_data: `reset` }],
+            [{ text: `🚫 Close`, callback_data: `cancel` }]
         ]
 
         return {
@@ -335,7 +335,7 @@ export const showKey = async (chatId: number) => {
 Delete this message once you are done.`
 
         const content = [
-            [{ text: `Delete`, callback_data: `cancel` }]
+            [{ text: `🗑️ Delete`, callback_data: `cancel` }]
         ]
 
         return {
@@ -358,7 +358,7 @@ You can get reward if you refer someone
 ${referrer ? "You have been referred" : ""}`
 
         const content = [
-            [{ text: `Close`, callback_data: `cancel` }]
+            [{ text: `🚫 Close`, callback_data: `cancel` }]
         ]
 
         return {
@@ -380,18 +380,18 @@ Max Price Impact is to protect against trades in extremely illiquid pools.`
     const { buy1, buy2, sell1, sell2, slippage1, slippage2, } = await getSetting(chatId)
     const content = [
         [{ text: `--- Buy Amount Config ---`, callback_data: `buy config` }],
-        [{ text: `✎ Left: ${buy1} INJ`, callback_data: `buy1` }, {
-            text: `✎ Right: ${buy2} INJ`, callback_data: `buy2`
+        [{ text: `✏️ Left: ${buy1} INJ`, callback_data: `buy1` }, {
+            text: `✏️ Right: ${buy2} INJ`, callback_data: `buy2`
         }],
         [{ text: `--- Sell Amount Config ---`, callback_data: `sell config` }],
-        [{ text: `✎ Left: ${sell1} %`, callback_data: `sell1` }, {
-            text: `✎ Right: ${sell2} %`, callback_data: `sell2`
+        [{ text: `✏️ Left: ${sell1} %`, callback_data: `sell1` }, {
+            text: `✏️ Right: ${sell2} %`, callback_data: `sell2`
         }],
         [{ text: `--- Slippage Percentage Config ---`, callback_data: `slippage config` }],
-        [{ text: `✎ Buy: ${slippage1} %`, callback_data: `slippage1` }, {
-            text: `✎ Sell: ${slippage2} %`, callback_data: `slippage2`
+        [{ text: `✏️ Buy: ${slippage1} %`, callback_data: `slippage1` }, {
+            text: `✏️ Sell: ${slippage2} %`, callback_data: `slippage2`
         }],
-        [{ text: `Close`, callback_data: `cancel` }]
+        [{ text: `🚫 Close`, callback_data: `cancel` }]
     ]
 
     return { title, content }
@@ -413,18 +413,18 @@ Max Price Impact is to protect against trades in extremely illiquid pools.`
     const { announcement, buy1, buy2, sell1, sell2, slippage1, slippage2, priority, priorityAmount } = await setSettings(chatId, category, value)
     const content = [
         [{ text: `--- Buy Amount Config ---`, callback_data: `buy config` }],
-        [{ text: `✎ Left: ${buy1} INJ`, callback_data: `buy1` }, {
-            text: `✎ Right: ${buy2} INJ`, callback_data: `buy2`
+        [{ text: `✏️ Left: ${buy1} INJ`, callback_data: `buy1` }, {
+            text: `✏️ Right: ${buy2} INJ`, callback_data: `buy2`
         }],
         [{ text: `--- Sell Percentage Config ---`, callback_data: `sell config` }],
-        [{ text: `✎ Left: ${sell1} %`, callback_data: `sell1` }, {
-            text: `✎ Right: ${sell2} %`, callback_data: `sell2`
+        [{ text: `✏️ Left: ${sell1} %`, callback_data: `sell1` }, {
+            text: `✏️ Right: ${sell2} %`, callback_data: `sell2`
         }],
         [{ text: `--- Slippage Percentage Config ---`, callback_data: `slippage config` }],
-        [{ text: `✎ Buy: ${slippage1} %`, callback_data: `slippage1` }, {
-            text: `✎ Sell: ${slippage2} %`, callback_data: `slippage2`
+        [{ text: `✏️ Buy: ${slippage1} %`, callback_data: `slippage1` }, {
+            text: `✏️ Sell: ${slippage2} %`, callback_data: `slippage2`
         }],
-        [{ text: `Close`, callback_data: `cancel` }]
+        [{ text: `🚫 Close`, callback_data: `cancel` }]
     ]
 
     return { title, content }
@@ -448,12 +448,12 @@ To buy press one of the buttons below.`
 
                     const { buy1, buy2 } = await getSetting(chatId)
                     const content = [
-                        [{ text: `Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
-                        [{ text: `Buy ${buy1} INJ`, callback_data: `buyS:${result.pairAddress}` }, {
-                            text: `Buy ${buy2} INJ`, callback_data: `buyL:${result.pairAddress}`
-                        }, { text: `Buy X INJ`, callback_data: `buyX:${result.pairAddress}` }],
-                        [{ text: `Limit Order`, callback_data: `limitB:${address}` }],
-                        [{ text: `Close`, callback_data: `cancel` }]
+                        [{ text: `🔎 Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `🔎 Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
+                        [{ text: `💸 Buy ${buy1} INJ`, callback_data: `buyS:${result.pairAddress}` }, {
+                            text: `💸 Buy ${buy2} INJ`, callback_data: `buyL:${result.pairAddress}`
+                        }, { text: `💸 Buy X INJ`, callback_data: `buyX:${result.pairAddress}` }],
+                        [{ text: `📄 Limit Order`, callback_data: `limitB:${address}` }],
+                        [{ text: `🚫 Close`, callback_data: `cancel` }]
                     ]
                     return { title, content }
                 } else {
@@ -469,16 +469,16 @@ To sell press one of the buttons below.`
                     const { sell1, sell2 } = await getSetting(chatId)
 
                     const content = [
-                        [{ text: `Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
-                        [{ text: `Sell ${sell1} %`, callback_data: `sellS:${address}` }, {
-                            text: `Sell ${sell2} %`, callback_data: `sellL:${address}`
-                        }, { text: `Sell X %`, callback_data: `sellX:${address}` }],
-                        [{ text: `Close`, callback_data: `cancel` }]
+                        [{ text: `🔎 Token Explorer`, url: `${injExplorer}/account/${address}` }, { text: `🔎 Pair Explorer`, url: `${dojoPairUrl}/${result.pairAddress}` }],
+                        [{ text: `🛒 Sell ${sell1} %`, callback_data: `sellS:${address}` }, {
+                            text: `🛒 Sell ${sell2} %`, callback_data: `sellL:${address}`
+                        }, { text: `🛒 Sell X %`, callback_data: `sellX:${address}` }],
+                        [{ text: `🚫 Close`, callback_data: `cancel` }]
                     ]
                     return { title, content }
                 }
-            } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: 'Close', callback_data: 'cancel' }]] }
-        } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: 'Close', callback_data: 'cancel' }]] }
+            } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: '🚫 Close', callback_data: 'cancel' }]] }
+        } else return { title: errorTitle.inputBuyTokenAddress, content: [[{ text: '🚫 Close', callback_data: 'cancel' }]] }
     } catch (e) {
         console.log(e)
         return undefined
@@ -488,12 +488,12 @@ To sell press one of the buttons below.`
 export const swapTokens = async (chatId: number, value: string, address: string, type: string) => {
     const result = await swapTokenHelper(chatId, value, address, type)
     if (result && result?.success) {
-        const title = `Transaction Sucesss `
-        const content = [[{ text: `View on explorer`, url: `https://explorer.injective.network/transaction/${result.data}/` }]]
+        const title = `✔️ Transaction Sucesss `
+        const content = [[{ text: `🔎 View on explorer`, url: `https://explorer.injective.network/transaction/${result.data}/` }]]
         return { title, content }
     } else {
-        const title = `Transaction Failed\n${result?.data}`
-        const content = [[{ text: `Close`, callback_data: `cancel` }]]
+        const title = `❌ Transaction Failed\n${result?.data}`
+        const content = [[{ text: `🚫 Close`, callback_data: `cancel` }]]
         return { title, content }
     }
 }
@@ -506,7 +506,7 @@ export const checkINJBalance = async (chatId: number, value: string) => {
 
 export const invalid = (type: string) => {
     const title = errorTitle[type]
-    const content = [[{ text: `Close`, callback_data: `cancel` }]]
+    const content = [[{ text: `🚫 Close`, callback_data: `cancel` }]]
     return { title, content }
 }
 
