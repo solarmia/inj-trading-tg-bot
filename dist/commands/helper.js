@@ -21,7 +21,7 @@ const indexerGrpcAccountPortfolioApi = new sdk_ts_1.IndexerGrpcAccountPortfolioA
 const chainGrpcBankApi = new sdk_ts_1.ChainGrpcBankApi(endpoints.grpc);
 const indexerRestExplorerApi = new sdk_ts_1.IndexerRestExplorerApi(`${endpoints.explorer}/api/explorer/v1`);
 const sendSyncMsg = async (bot, chatId, result) => {
-    bot.sendMessage(chatId, result.title, {
+    await bot.sendMessage(chatId, result.title, {
         reply_markup: {
             inline_keyboard: result.content,
             resize_keyboard: true
@@ -30,8 +30,8 @@ const sendSyncMsg = async (bot, chatId, result) => {
         .then(msg => msg)
         .catch((error) => {
         if (error.response && error.response.statusCode === 429) {
-            setTimeout(() => {
-                (0, exports.sendSyncMsg)(bot, chatId, result);
+            setTimeout(async () => {
+                await (0, exports.sendSyncMsg)(bot, chatId, result);
             }, 1000);
         }
         if (error.response && error.response.statusCode === 403) {
@@ -40,16 +40,34 @@ const sendSyncMsg = async (bot, chatId, result) => {
     });
 };
 exports.sendSyncMsg = sendSyncMsg;
+// export const sendSyncTitle = async (bot: TelegramBot, chatId: number, title: any)=> {
+//   await bot.sendMessage(
+//     chatId,
+//     title
+//   )
+//     .then(msg => {
+//       console.log('----',msg)
+//       return msg
+//     })
+//     .catch((error: TelegramErrorResponse) => {
+//       if (error.response && error.response.statusCode === 429) {
+//         setTimeout(async () => {
+//           return await sendSyncMsg(bot, chatId, title);
+//         }, 1000);
+//       }
+//     })
+// }
 const sendSyncTitle = async (bot, chatId, title) => {
-    await bot.sendMessage(chatId, title)
-        .then(msg => { return msg; })
-        .catch((error) => {
-        if (error.response && error.response.statusCode === 429) {
-            setTimeout(() => {
-                return (0, exports.sendSyncMsg)(bot, chatId, title);
+    while (true) {
+        try {
+            const msg = await bot.sendMessage(chatId, title);
+            return msg;
+        }
+        catch (error) {
+            setTimeout(async () => {
             }, 1000);
         }
-    });
+    }
 };
 exports.sendSyncTitle = sendSyncTitle;
 const deleteSync = async (bot, chatId, msgId) => {
@@ -292,14 +310,17 @@ const setSettings = async (chatId, category, value) => {
     return settings[chatId];
 };
 exports.setSettings = setSettings;
-const getTokenInfoHelper = async (address, chatId) => {
+const getTokenInfoHelper = async (addr, chatId) => {
+    const address = addr.replace(/\//g, '-');
     const dex = (await axios_1.default.get(`${config_1.dexUrl}/${address}`)).data;
     if (!('pairs' in dex))
         return undefined;
     const pairs = dex.pairs;
+    const middleToken = [];
     if (pairs && pairs.length) {
         for (let i = 0; i < pairs.length; i++) {
             if (pairs[i].chainId == 'injective' && pairs[i].dexId == 'dojoswap' && ((pairs[i].baseToken.address == config_1.injAddr && pairs[i].quoteToken.address == address) || (pairs[i].quoteToken.address == config_1.injAddr && pairs[i].baseToken.address == address))) {
+                middleToken.push(pairs[i].baseToken.address == address ? pairs[i].quoteToken.address : pairs[i].baseToken.address);
                 const tokenInfo = pairs[i].baseToken.address == address ? pairs[i].baseToken : pairs[i].quoteToken;
                 const price = pairs[i].priceUsd;
                 const priceChange = pairs[i].priceChange;
@@ -328,6 +349,7 @@ const swapTokenHelper = async (chatId, value, tokenAddr, type) => {
     const injectiveAddress = privateKey.toBech32();
     const signer = privateKey.toAddress();
     const pubKey = privateKey.toPublicKey().toBase64();
+    console.log('swap');
     if (type == 'buy') {
         switch (value) {
             case 'buyS':
@@ -615,7 +637,7 @@ const placeLimitOrder = async () => {
                 }
             }
         }
-    }, 60000);
+    }, 600000);
 };
 exports.placeLimitOrder = placeLimitOrder;
 const orderBuy = async (data, chatId, tokenAddr) => {
@@ -759,7 +781,7 @@ const getInjPriceFiat = async () => {
 };
 const isValidAddress = (address) => {
     // Define the regular expression pattern for the address
-    const regexPattern = /^inj[a-z0-9]{39}$/;
+    const regexPattern = /inj[a-z0-9]{39}/;
     // Test the address against the pattern
     return regexPattern.test(address);
 };
