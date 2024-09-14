@@ -1,53 +1,13 @@
 {
-    "6381452440440": {
-        "privateKey": "0x540b5e73c7b363a21173b4022668b8315ba5c6f90d23f6f983c9428a7003d2ad",
-        "publicKey": "inj1yzvt0kdphnrfgdspm62005py82w5wgvwp3jxrv",
-        "balance": 0,
-        "referralLink": "https://t.me/aaaa1234123aaaaabot?ref=NjM4MTQ1MjQ0MA==",
-        "referees": [],
-        "referrer": "",
-        "buy": 336600000000000000,
-        "sell": 405452282713489100
-    },
-    "6381452441": {
-        "privateKey": "balance",
-        "publicKey": "inj1yzvt0kdphnrfgdspm62005py82w5wgvwp3jxrv",
-        "balance": 1,
-        "referralLink": "https://t.me/aaaa1234123aaaaabot?ref=NjM4MTQ1MjQ0MA==",
-        "referees": [],
-        "referrer": "",
-        "buy": 0,
-        "sell": 0
-    },
-    "6381452442": {
-        "privateKey": "buy",
-        "publicKey": "inj1yzvt0kdphnrfgdspm62005py82w5wgvwp3jxrv",
-        "balance": 0,
-        "referralLink": "https://t.me/aaaa1234123aaaaabot?ref=NjM4MTQ1MjQ0MA==",
-        "referees": [],
-        "referrer": "",
-        "buy": 1,
-        "sell": 0
-    },
-    "6381452443": {
-        "privateKey": "sell",
-        "publicKey": "inj1yzvt0kdphnrfgdspm62005py82w5wgvwp3jxrv",
-        "balance": 0,
-        "referralLink": "https://t.me/aaaa1234123aaaaabot?ref=NjM4MTQ1MjQ0MA==",
-        "referees": [],
-        "referrer": "",
-        "buy": 0,
-        "sell": 1
-    },
     "6381452440": {
-        "privateKey": "0x9a9044a0f632ddff421d775db93bd13eac31bb87313efb2b687abf198c9deae6",
-        "publicKey": "inj15579l82y9yt8cgnrw3pqc8ur26j55jpdmwde5k",
-        "balance": 0.3099423276040301,
-        "referralLink": "https://t.me/aaaa1234123aaaaabot?ref=NjM4MTQ1MjQ0MA==",
+        "privateKey": "0xc3787c4148b2f5fb7a42b011c251738bf3d3b1355b0009805bf3feec77757327",
+        "publicKey": "inj1duvhfjv4mgnzr83uvukmt9q28yka0u504rr8s3",
+        "balance": 0,
+        "referralLink": "https://t.me/testesttest12313213_bot?ref=NjM4MTQ1MjQ0MA==",
         "referees": [],
         "referrer": "",
-        "buy": 1980000000000000,
+        "buy": 0,
         "sell": 0,
-        "sclx": 0.009899999999999999
+        "sclx": 0
     }
 }

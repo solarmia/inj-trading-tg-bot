@@ -24,8 +24,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev index.ts",
-    "start": "ts-node index.ts",
-    "run": "node dist/index.js",
+    "start": "node dist/index.js",
     "build": "tsc --build"
   },
   "devDependencies": {
